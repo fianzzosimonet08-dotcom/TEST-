@@ -1,344 +1,644 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Centrio | Ne gérez plus l'administratif. Dirigez votre entreprise.</title>
-    <meta name="description" content="L'outil tout-en-un au design épuré qui fait gagner 10 heures par semaine aux TPE et PME.">
+    <title>EntrepriseFacile - Outils de Gestion</title>
     
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS pour le style -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuration Tailwind pour les couleurs de la marque -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
                     colors: {
                         brand: {
-                            50: '#f0fdfa',
-                            100: '#ccfbf1',
-                            500: '#14b8a6',
-                            600: '#0d9488',
-                            900: '#134e4a',
-                        },
-                        dark: '#0f172a'
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <style>
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-            opacity: 0;
+        body { font-family: 'Inter', sans-serif; }
+        .nav-active { background-color: #e0f2fe; color: #0284c7; border-right: 4px solid #0284c7; font-weight: 600; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animation for Toast */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
-        .faq-answer.open {
-            max-height: 500px;
-            opacity: 1;
-        }
-        .faq-icon {
-            transition: transform 0.3s ease;
-        }
-        .faq-icon.open {
-            transform: rotate(180deg);
-        }
+        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex">
 
-    <!-- Navigation -->
-    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    </div>
-                    <span class="font-bold text-2xl tracking-tight text-gray-900">Centrio</span>
-                </div>
-                <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#features" class="text-gray-600 hover:text-brand-600 font-medium transition">Fonctionnalités</a>
-                    <a href="#pricing" class="text-gray-600 hover:text-brand-600 font-medium transition">Accès Bêta</a>
-                    <a href="#" onclick="alert('Version de test gratuite bientôt disponible !')" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-full font-medium transition shadow-lg shadow-brand-500/30">Créer mon compte gratuit</a>
-                </div>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="bg-white w-64 h-full border-r border-slate-200 flex flex-col transition-transform duration-300 absolute z-20 md:relative md:translate-x-0 -translate-x-full shadow-lg md:shadow-none">
+        <div class="p-6 flex items-center justify-between border-b border-slate-100">
+            <div class="flex items-center gap-2 text-brand-600">
+                <i class="ph-fill ph-rocket-launch text-2xl"></i>
+                <span class="text-xl font-bold tracking-tight">ProFacile</span>
             </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 text-brand-600 font-medium text-sm mb-8 border border-brand-100">
-                <span class="flex h-2 w-2 rounded-full bg-brand-500 animate-pulse"></span>
-                Phase de lancement : Accès 100% gratuit
-            </div>
-            <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-gray-900 mb-6 leading-tight">
-                Ne gérez plus l'administratif. <br class="hidden md:block">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-blue-600">Dirigez votre entreprise.</span>
-            </h1>
-            <p class="mt-4 text-xl text-gray-500 max-w-3xl mx-auto mb-10 leading-relaxed">
-                Centralisez vos échanges, automatisez vos factures et signez vos contrats au même endroit. L'outil tout-en-un au design épuré, actuellement gratuit pour nos premiers testeurs.
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <a href="#" onclick="alert('Version de test gratuite bientôt disponible !')" class="w-full sm:w-auto px-8 py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-lg transition shadow-xl shadow-gray-900/20 text-center">
-                    Accéder à la version gratuite
-                </a>
-            </div>
-            <p class="mt-4 text-sm text-gray-400 font-medium">Aucune carte requise • Version Bêta • Places limitées</p>
-            
-            <!-- Mockup Dashboard -->
-            <div class="mt-20 relative max-w-5xl mx-auto">
-                <div class="absolute inset-0 bg-gradient-to-t from-gray-50 to-transparent z-10 h-full w-full pointer-events-none rounded-t-2xl"></div>
-                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2000" alt="Dashboard Centrio" class="rounded-2xl shadow-2xl border border-gray-200 object-cover object-top h-[500px] w-full" style="object-position: 50% 0%;">
-            </div>
-        </div>
-    </section>
-
-    <!-- Problem Section -->
-    <section class="py-24 bg-dark text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold mb-6">Vous n'avez pas créé votre entreprise pour courir après des factures.</h2>
-                <p class="text-gray-400 text-lg">La charge mentale administrative détruit la croissance des petites entreprises. Reconnaissez-vous ces situations ?</p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 gap-8">
-                <!-- Point 1 -->
-                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition">
-                    <div class="w-12 h-12 bg-red-500/20 text-red-400 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">L'éparpillement</h3>
-                    <p class="text-gray-400">Vos clients vous écrivent sur WhatsApp, par email et sur LinkedIn. Vous perdez le fil des discussions et des accords.</p>
-                </div>
-                <!-- Point 2 -->
-                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition">
-                    <div class="w-12 h-12 bg-orange-500/20 text-orange-400 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">La gêne de la relance</h3>
-                    <p class="text-gray-400">Réclamer un paiement en retard dégrade vos relations commerciales, vous coûte de l'énergie et fragilise votre trésorerie.</p>
-                </div>
-                <!-- Point 3 -->
-                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition">
-                    <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">La friction documentaire</h3>
-                    <p class="text-gray-400">Imprimer, signer, scanner. Un processus archaïque, lent et frustrant qui vous fait régulièrement perdre des contrats.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="py-24 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-32">
-            <!-- Feature 1 -->
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Portail Client Unifié : Offrez une expérience 5 étoiles</h2>
-                    <p class="text-lg text-gray-600 leading-relaxed">Donnez à vos clients un espace privé et sécurisé, à l'image de votre marque. Ils y retrouvent tous leurs devis, factures et historiques d'échanges en temps réel.</p>
-                </div>
-                <div class="bg-gray-100 rounded-2xl aspect-video p-8 flex items-center justify-center relative overflow-hidden shadow-inner">
-                    <div class="absolute inset-0 bg-gradient-to-br from-brand-100 to-blue-50 opacity-50"></div>
-                    <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm z-10 border border-gray-100">
-                        <div class="h-4 w-24 bg-gray-200 rounded mb-4"></div>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-100"></div><div class="h-3 w-20 bg-gray-200 rounded"></div></div>
-                                <div class="h-5 w-16 bg-green-100 rounded-full"></div>
-                            </div>
-                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-brand-100"></div><div class="h-3 w-24 bg-gray-200 rounded"></div></div>
-                                <div class="h-5 w-16 bg-green-100 rounded-full"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Feature 2 -->
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div class="order-2 lg:order-1 bg-gray-100 rounded-2xl aspect-video p-8 flex items-center justify-center relative overflow-hidden shadow-inner">
-                    <div class="absolute inset-0 bg-gradient-to-br from-purple-100 to-brand-50 opacity-50"></div>
-                    <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm z-10 border border-gray-100 flex flex-col gap-4">
-                        <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-lg shadow-sm"><div class="w-2 h-2 rounded-full bg-green-500"></div><div class="h-3 w-full bg-gray-100 rounded"></div></div>
-                        <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-lg shadow-sm bg-brand-50"><div class="w-2 h-2 rounded-full bg-orange-500"></div><div class="h-3 w-3/4 bg-brand-200 rounded"></div></div>
-                        <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-lg shadow-sm"><div class="w-2 h-2 rounded-full bg-gray-300"></div><div class="h-3 w-5/6 bg-gray-100 rounded"></div></div>
-                    </div>
-                </div>
-                <div class="order-1 lg:order-2">
-                    <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Boîte de Réception Omnicanale : Zéro message ignoré</h2>
-                    <p class="text-lg text-gray-600 leading-relaxed">Emails, WhatsApp, réseaux sociaux... Tout arrive au même endroit. Transformez le chaos des communications en un flux de travail fluide et collaboratif.</p>
-                </div>
-            </div>
-
-            <!-- Feature 3 -->
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                <div>
-                    <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Relances Intelligentes : Faites-vous payer, sans y penser</h2>
-                    <p class="text-lg text-gray-600 leading-relaxed">Notre système détecte les retards et envoie des relances courtoises, personnalisées et automatiques. Préservez votre trésorerie sans effort.</p>
-                </div>
-                <div class="bg-gray-100 rounded-2xl aspect-video p-8 flex items-center justify-center relative overflow-hidden shadow-inner">
-                    <div class="absolute inset-0 bg-gradient-to-br from-orange-100 to-red-50 opacity-50"></div>
-                    <div class="bg-white p-4 rounded-xl shadow-2xl w-full max-w-sm z-10 border border-gray-100 flex items-start gap-4 transform translate-x-4">
-                        <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 text-orange-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
-                        <div>
-                            <div class="text-sm font-semibold text-gray-900 mb-1">Relance automatique envoyée</div>
-                            <div class="text-xs text-gray-500">Facture #1042 - Client XYZ relancé avec succès.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing (Beta Access) Section -->
-    <section id="pricing" class="py-24 bg-white relative overflow-hidden">
-        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
-            <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-50 rounded-full blur-3xl opacity-50"></div>
-            <div class="absolute bottom-0 left-0 w-72 h-72 bg-blue-50 rounded-full blur-3xl opacity-50"></div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="bg-brand-100 text-brand-700 font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wide mb-4 inline-block">Offre de lancement</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 mt-4">Un outil premium. Actuellement 100% gratuit.</h2>
-                <p class="text-xl text-gray-600">Aidez-nous à peaufiner l'outil de demain. Inscrivez-vous gratuitement et participez à notre phase de Bêta fermée.</p>
-            </div>
-
-            <div class="max-w-lg mx-auto bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-brand-200 overflow-hidden transform hover:-translate-y-1 transition duration-300">
-                <div class="p-10 text-center border-b border-gray-100 bg-gray-50 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">Places limitées</div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Accès Pionnier (Bêta)</h3>
-                    <p class="text-gray-500 mb-6 font-medium text-sm">Profitez de toutes nos fonctionnalités gratuitement.</p>
-                    <div class="flex justify-center items-baseline mb-4">
-                        <span class="text-6xl font-extrabold text-gray-900">0€</span>
-                        <span class="text-xl text-gray-500 ml-2">/ pour l'instant</span>
-                    </div>
-                    <a href="#" onclick="alert('Version de test gratuite bientôt disponible !')" class="block w-full text-center bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-xl transition shadow-lg shadow-brand-500/30">
-                        Réserver mon accès gratuit
-                    </a>
-                    <p class="text-xs text-gray-400 mt-4">Aucune carte bancaire requise.</p>
-                </div>
-                <div class="p-10 bg-white">
-                    <ul class="space-y-4">
-                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Portail client complet</li>
-                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Relances automatiques intelligentes</li>
-                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Signatures électroniques certifiées</li>
-                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Boîte de réception centralisée</li>
-                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Un accès privilégié à nos nouveautés</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="py-24 bg-gray-50 border-t border-gray-200">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Questions fréquentes</h2>
-            
-            <div class="space-y-4">
-                <!-- FAQ Item 1 -->
-                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer faq-item shadow-sm">
-                    <div class="px-6 py-5 flex justify-between items-center bg-white hover:bg-gray-50 transition" onclick="toggleFaq(this)">
-                        <h3 class="font-semibold text-gray-900">L'outil est-il vraiment gratuit ?</h3>
-                        <svg class="w-5 h-5 text-gray-400 faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                    <div class="faq-answer bg-white px-6 pb-5 text-gray-600">
-                        <div class="pt-2">Oui. Actuellement en phase de lancement (Bêta test), Centrio est proposé 100% gratuitement. Nous voulons construire le meilleur outil possible en récoltant vos avis et retours.</div>
-                    </div>
-                </div>
-
-                <!-- FAQ Item 2 -->
-                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer faq-item shadow-sm">
-                    <div class="px-6 py-5 flex justify-between items-center bg-white hover:bg-gray-50 transition" onclick="toggleFaq(this)">
-                        <h3 class="font-semibold text-gray-900">Dois-je renseigner ma carte bancaire ?</h3>
-                        <svg class="w-5 h-5 text-gray-400 faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                    <div class="faq-answer bg-white px-6 pb-5 text-gray-600">
-                        <div class="pt-2">Absolument pas. Vous n'avez besoin d'aucun moyen de paiement pour vous inscrire à notre liste d'accès gratuit. Votre adresse email suffit.</div>
-                    </div>
-                </div>
-
-                <!-- FAQ Item 3 -->
-                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer faq-item shadow-sm">
-                    <div class="px-6 py-5 flex justify-between items-center bg-white hover:bg-gray-50 transition" onclick="toggleFaq(this)">
-                        <h3 class="font-semibold text-gray-900">Les signatures électroniques ont-elles une valeur légale ?</h3>
-                        <svg class="w-5 h-5 text-gray-400 faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                    </div>
-                    <div class="faq-answer bg-white px-6 pb-5 text-gray-600">
-                        <div class="pt-2">Oui. Nos futures intégrations de signatures respecteront les normes européennes eIDAS, garantissant une conformité légale totale pour tous vos contrats B2B.</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Final CTA & Footer -->
-    <footer class="bg-dark text-white pt-24 pb-12">
-        <div class="max-w-4xl mx-auto px-4 text-center mb-20">
-            <h2 class="text-4xl font-bold mb-6">Prêt à transformer la gestion de votre PME ?</h2>
-            <p class="text-xl text-gray-400 mb-10">Rejoignez les entrepreneurs pionniers qui testent notre outil gratuitement.</p>
-            <a href="#" onclick="alert('Version de test gratuite bientôt disponible !')" class="inline-block bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 px-10 rounded-full text-lg transition shadow-xl shadow-brand-500/20">
-                S'inscrire gratuitement
-            </a>
+            <button id="close-sidebar" class="md:hidden text-slate-400 hover:text-slate-600">
+                <i class="ph ph-x text-xl"></i>
+            </button>
         </div>
         
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2">
-                <div class="w-6 h-6 bg-brand-600 rounded flex items-center justify-center">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                </div>
-                <span class="font-bold text-xl tracking-tight">Centrio</span>
-            </div>
-            <div class="flex flex-wrap justify-center gap-6 text-sm text-gray-500">
-                <a href="#" class="hover:text-white transition">Mentions légales</a>
-                <a href="#" class="hover:text-white transition">Politique de confidentialité</a>
-                <a href="#" class="hover:text-white transition">Contact</a>
-            </div>
-            <div class="text-sm text-gray-500">
-                © 2024 Centrio. Version Bêta fermée.
+        <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-item nav-active flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-50 transition-colors w-full">
+                <i class="ph ph-squares-four text-xl"></i>
+                <span>Tableau de bord</span>
+            </button>
+            <button onclick="navigate('invoices')" id="nav-invoices" class="nav-item flex items-center gap-3 px-6 py-3 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors w-full">
+                <i class="ph ph-receipt text-xl"></i>
+                <span>Factures Rapides</span>
+            </button>
+            <button onclick="navigate('tasks')" id="nav-tasks" class="nav-item flex items-center gap-3 px-6 py-3 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors w-full">
+                <i class="ph ph-check-square-offset text-xl"></i>
+                <span>Tâches à faire</span>
+            </button>
+            <button onclick="navigate('emails')" id="nav-emails" class="nav-item flex items-center gap-3 px-6 py-3 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors w-full">
+                <i class="ph ph-envelope-simple-open text-xl"></i>
+                <span>Modèles d'Emails</span>
+            </button>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-100">
+            <div class="bg-brand-50 rounded-lg p-4 text-center">
+                <i class="ph-fill ph-sparkle text-brand-500 text-2xl mb-2"></i>
+                <p class="text-xs text-brand-900 font-medium">Outil 100% gratuit, conçu pour gagner du temps.</p>
             </div>
         </div>
-    </footer>
+    </aside>
 
-    <!-- Script pour la FAQ -->
-    <script>
-        function toggleFaq(element) {
-            const answer = element.nextElementSibling;
-            const icon = element.querySelector('.faq-icon');
+    <!-- Main Content -->
+    <main class="flex-1 h-full flex flex-col overflow-hidden relative">
+        
+        <!-- Top Header -->
+        <header class="bg-white h-16 border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 shrink-0">
+            <div class="flex items-center gap-4">
+                <button id="open-sidebar" class="md:hidden text-slate-500 hover:text-slate-800">
+                    <i class="ph ph-list text-2xl"></i>
+                </button>
+                <h1 id="page-title" class="text-lg font-semibold text-slate-800">Vue d'ensemble</h1>
+            </div>
+            <div class="text-sm text-slate-500 hidden sm:block">
+                Outils d'entreprise
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto p-4 sm:p-8">
             
-            document.querySelectorAll('.faq-answer').forEach(el => {
-                if(el !== answer) {
-                    el.classList.remove('open');
-                    el.previousElementSibling.querySelector('.faq-icon').classList.remove('open');
-                }
+            <!-- SECTION: Dashboard -->
+            <div id="sec-dashboard" class="section-content animate-fade-in max-w-5xl mx-auto">
+                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 mb-8">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-4">Bienvenue sur ProFacile 👋</h2>
+                    <p class="text-slate-600 text-lg leading-relaxed max-w-3xl">
+                        Fini la paperasse interminable et les tâches répétitives. Ce logiciel est conçu spécifiquement pour résoudre les <strong>choses les plus chiantes</strong> de la gestion d'entreprise : calculer des factures, relancer des clients ou s'organiser. <span class="text-brand-600 font-medium">Tout est gratuit, direct, et sécurisé (aucune donnée ne quitte votre ordinateur).</span>
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <button onclick="navigate('invoices')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i class="ph-fill ph-receipt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Facturation Eclair</h3>
+                        <p class="text-slate-500 text-sm">Générez une facture chiffrée en 30 secondes sans vous tromper dans les calculs de TVA.</p>
+                    </button>
+                    
+                    <button onclick="navigate('tasks')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i class="ph-fill ph-check-circle text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Mémoire Infaillible</h3>
+                        <p class="text-slate-500 text-sm">Un gestionnaire de tâches ultra-simple pour ne plus jamais oublier une mission urgente.</p>
+                    </button>
+
+                    <button onclick="navigate('emails')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                            <i class="ph-fill ph-paper-plane-tilt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Anti-Page Blanche</h3>
+                        <p class="text-slate-500 text-sm">Modèles d'emails professionnels (relances, devis) prêts à être copiés-collés.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECTION: Invoices -->
+            <div id="sec-invoices" class="section-content hidden max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Calculateur de Facture Rapide</h2>
+                        <button onclick="window.print()" class="text-brand-600 hover:text-brand-800 flex items-center gap-2 font-medium">
+                            <i class="ph ph-printer"></i> Imprimer
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Client</label>
+                            <input type="text" placeholder="Nom de l'entreprise..." class="w-full border-slate-300 rounded-lg shadow-sm border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Date</label>
+                            <input type="date" class="w-full border-slate-300 rounded-lg shadow-sm border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all" id="invoice-date">
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="overflow-x-auto mb-6 rounded-lg border border-slate-200">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
+                                    <th class="p-3 font-medium w-1/2">Description</th>
+                                    <th class="p-3 font-medium text-center">Qté</th>
+                                    <th class="p-3 font-medium text-right">Prix Unitaire (€)</th>
+                                    <th class="p-3 font-medium text-right">Total (€)</th>
+                                    <th class="p-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoice-items-body">
+                                <!-- JS injected items go here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Add Item Form -->
+                    <div class="flex flex-col sm:flex-row gap-3 items-end mb-8 bg-slate-50 p-4 rounded-lg border border-slate-200 border-dashed">
+                        <div class="flex-1 w-full">
+                            <input type="text" id="new-item-desc" placeholder="Description du service / produit" class="w-full border p-2 rounded-md outline-none focus:border-brand-500">
+                        </div>
+                        <div class="w-full sm:w-24">
+                            <input type="number" id="new-item-qty" placeholder="Qté" value="1" min="1" class="w-full border p-2 rounded-md outline-none focus:border-brand-500">
+                        </div>
+                        <div class="w-full sm:w-32">
+                            <input type="number" id="new-item-price" placeholder="Prix €" step="0.01" min="0" class="w-full border p-2 rounded-md outline-none focus:border-brand-500">
+                        </div>
+                        <button onclick="addInvoiceItem()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-md transition-colors whitespace-nowrap">
+                            Ajouter
+                        </button>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="flex justify-end">
+                        <div class="w-full sm:w-72 space-y-3">
+                            <div class="flex justify-between text-slate-600">
+                                <span>Sous-total HT</span>
+                                <span id="invoice-subtotal">0.00 €</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-600">
+                                <span>TVA (20%)</span>
+                                <span id="invoice-tax">0.00 €</span>
+                            </div>
+                            <div class="border-t border-slate-200 pt-3 flex justify-between font-bold text-xl text-slate-900">
+                                <span>Total TTC</span>
+                                <span id="invoice-total">0.00 €</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: Tasks -->
+            <div id="sec-tasks" class="section-content hidden max-w-3xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[70vh]">
+                    <div class="p-6 bg-brand-50 border-b border-brand-100 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+                        <div>
+                            <h2 class="text-2xl font-bold text-brand-900">Tâches à faire</h2>
+                            <p class="text-brand-600 text-sm">Ne perdez plus le fil de vos missions.</p>
+                        </div>
+                        <span id="task-counter" class="bg-white text-brand-700 px-3 py-1 rounded-full text-sm font-semibold shadow-sm border border-brand-100">
+                            0 restante(s)
+                        </span>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto p-2 sm:p-6 bg-slate-50">
+                        <ul id="task-list" class="space-y-3">
+                            <!-- Tasks injected via JS -->
+                        </ul>
+                        
+                        <div id="empty-tasks" class="text-center py-12 text-slate-400">
+                            <i class="ph ph-coffee text-5xl mb-3"></i>
+                            <p>Aucune tâche pour le moment. Détendez-vous !</p>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 sm:p-6 bg-white border-t border-slate-200 shrink-0">
+                        <form id="task-form" class="flex gap-2">
+                            <input type="text" id="new-task-input" placeholder="Ajouter une nouvelle tâche (ex: Appeler le comptable)..." class="flex-1 border-slate-300 rounded-lg border p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all shadow-sm" required autocomplete="off">
+                            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2">
+                                <i class="ph-bold ph-plus"></i> <span class="hidden sm:inline">Ajouter</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: Emails -->
+            <div id="sec-emails" class="section-content hidden max-w-5xl mx-auto">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Modèles d'Emails Professionnels</h2>
+                    <p class="text-slate-600 mt-1">Évitez la page blanche. Copiez, collez, personnalisez les crochets [ ], et envoyez.</p>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- Template 1: Relance -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-red-50 border-b border-red-100 p-4 flex justify-between items-center">
+                            <h3 class="font-semibold text-red-800 flex items-center gap-2">
+                                <i class="ph-fill ph-warning-circle"></i> Relance de facture impayée
+                            </h3>
+                            <button onclick="copyEmail('email-relance')" class="text-red-600 hover:text-red-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-red-200 transition-colors">
+                                Copier
+                            </button>
+                        </div>
+                        <div class="p-4 bg-slate-50 flex-1">
+                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Relance - Facture n°[NUMÉRO]</p>
+                            <textarea id="email-relance" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Client],
+
+Sauf erreur ou omission de notre part, le paiement de la facture n°[NUMÉRO] datée du [DATE], d'un montant de [MONTANT] n'a pas encore été reçu.
+
+Le délai de paiement étant échu depuis le [DATE D'ÉCHÉANCE], nous vous prions de bien vouloir procéder au règlement dans les plus brefs délais.
+
+Si le paiement a déjà été effectué, veuillez ne pas tenir compte de cet email.
+
+Cordialement,
+[Votre Nom / Entreprise]</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Template 2: Envoi Devis -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-brand-50 border-b border-brand-100 p-4 flex justify-between items-center">
+                            <h3 class="font-semibold text-brand-800 flex items-center gap-2">
+                                <i class="ph-fill ph-file-text"></i> Envoi d'une proposition commerciale
+                            </h3>
+                            <button onclick="copyEmail('email-devis')" class="text-brand-600 hover:text-brand-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-brand-200 transition-colors">
+                                Copier
+                            </button>
+                        </div>
+                        <div class="p-4 bg-slate-50 flex-1">
+                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Proposition commerciale suite à nos échanges</p>
+                            <textarea id="email-devis" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Contact],
+
+Suite à notre discussion d'hier, vous trouverez ci-joint notre devis concernant [SUJET DU PROJET].
+
+Nous avons détaillé l'ensemble des prestations que nous pourrions mettre en œuvre pour répondre à vos objectifs, pour un montant total de [MONTANT]. 
+
+Je reste à votre entière disposition pour échanger sur cette proposition et l'ajuster si nécessaire.
+
+Dans l'attente de votre retour, je vous souhaite une excellente journée.
+
+Cordialement,
+[Votre Nom / Entreprise]</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Template 3: Réponse négative polie -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-slate-100 border-b border-slate-200 p-4 flex justify-between items-center">
+                            <h3 class="font-semibold text-slate-800 flex items-center gap-2">
+                                <i class="ph-fill ph-hand-palm"></i> Refus poli d'une demande/partenariat
+                            </h3>
+                            <button onclick="copyEmail('email-refus')" class="text-slate-600 hover:text-slate-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-slate-300 transition-colors">
+                                Copier
+                            </button>
+                        </div>
+                        <div class="p-4 bg-slate-50 flex-1">
+                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Suite à votre proposition</p>
+                            <textarea id="email-refus" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Contact],
+
+Je vous remercie pour votre message et l'intérêt que vous portez à [Nom de votre entreprise].
+
+Après étude de votre proposition, nous ne pourrons malheureusement pas y donner suite. Nos priorités actuelles [ou notre budget actuel] ne nous permettent pas de nous engager dans cette voie pour le moment.
+
+Je vous souhaite néanmoins une excellente continuation dans vos projets.
+
+Bien cordialement,
+[Votre Nom / Entreprise]</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Template 4: Demande de retour/Témoignage -->
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-amber-50 border-b border-amber-100 p-4 flex justify-between items-center">
+                            <h3 class="font-semibold text-amber-800 flex items-center gap-2">
+                                <i class="ph-fill ph-star"></i> Demande d'avis client
+                            </h3>
+                            <button onclick="copyEmail('email-avis')" class="text-amber-600 hover:text-amber-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-amber-200 transition-colors">
+                                Copier
+                            </button>
+                        </div>
+                        <div class="p-4 bg-slate-50 flex-1">
+                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Votre avis est précieux pour nous !</p>
+                            <textarea id="email-avis" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Client],
+
+Nous espérons que vous êtes pleinement satisfait de notre récente prestation [ou produit].
+
+Afin de nous aider à toujours améliorer nos services, accepteriez-vous de prendre 2 minutes pour nous laisser un avis en ligne ? 
+
+Vous pouvez cliquer sur ce lien direct : [LIEN VERS GOOGLE/TRUSTPILOT]
+
+Votre retour d'expérience est inestimable pour notre petite entreprise. Merci beaucoup pour votre confiance.
+
+Bien à vous,
+[Votre Nom / Entreprise]</textarea>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <!-- Overlay for Mobile Sidebar -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-10 hidden md:hidden"></div>
+
+    <script>
+        // --- INITIALIZATION ---
+        document.getElementById('invoice-date').valueAsDate = new Date();
+
+        // --- NAVIGATION LOGIC ---
+        const sections = ['dashboard', 'invoices', 'tasks', 'emails'];
+        const pageTitles = {
+            'dashboard': "Vue d'ensemble",
+            'invoices': 'Générateur de Factures',
+            'tasks': 'Gestionnaire de Tâches',
+            'emails': "Modèles d'Emails"
+        };
+
+        function navigate(targetId) {
+            // Hide all sections
+            sections.forEach(sec => {
+                document.getElementById(`sec-${sec}`).classList.add('hidden');
+                document.getElementById(`nav-${sec}`).classList.remove('nav-active', 'text-brand-600');
+                document.getElementById(`nav-${sec}`).classList.add('text-slate-600');
+            });
+            
+            // Show target
+            document.getElementById(`sec-${targetId}`).classList.remove('hidden');
+            
+            // Style active nav
+            const activeNav = document.getElementById(`nav-${targetId}`);
+            activeNav.classList.add('nav-active');
+            activeNav.classList.remove('text-slate-600');
+            
+            // Update Title
+            document.getElementById('page-title').textContent = pageTitles[targetId];
+
+            // Close mobile sidebar if open
+            closeSidebar();
+        }
+
+        // --- MOBILE SIDEBAR LOGIC ---
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const openBtn = document.getElementById('open-sidebar');
+        const closeBtn = document.getElementById('close-sidebar');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        }
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast-enter flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white font-medium ${type === 'success' ? 'bg-slate-800' : 'bg-red-500'}`;
+            
+            const icon = type === 'success' ? '<i class="ph ph-check-circle text-xl"></i>' : '<i class="ph ph-warning text-xl"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- INVOICE CALCULATOR LOGIC ---
+        let invoiceItems = [
+            { id: 1, desc: 'Consultation initiale', qty: 1, price: 150.00 }
+        ];
+
+        function formatMoney(amount) {
+            return parseFloat(amount).toFixed(2) + ' €';
+        }
+
+        function renderInvoiceItems() {
+            const tbody = document.getElementById('invoice-items-body');
+            tbody.innerHTML = '';
+            
+            let subtotal = 0;
+
+            if (invoiceItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Aucune ligne facturée.</td></tr>`;
+            }
+
+            invoiceItems.forEach(item => {
+                const total = item.qty * item.price;
+                subtotal += total;
+                
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-slate-100 last:border-0";
+                tr.innerHTML = `
+                    <td class="p-3 py-4 text-slate-800">${item.desc}</td>
+                    <td class="p-3 text-center text-slate-600">${item.qty}</td>
+                    <td class="p-3 text-right text-slate-600">${formatMoney(item.price)}</td>
+                    <td class="p-3 text-right font-medium text-slate-800">${formatMoney(total)}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="removeInvoiceItem(${item.id})" class="text-red-400 hover:text-red-600 p-1 rounded transition-colors">
+                            <i class="ph-bold ph-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
 
-            answer.classList.toggle('open');
-            icon.classList.toggle('open');
+            const tax = subtotal * 0.20; // 20% TVA
+            const grandTotal = subtotal + tax;
+
+            document.getElementById('invoice-subtotal').textContent = formatMoney(subtotal);
+            document.getElementById('invoice-tax').textContent = formatMoney(tax);
+            document.getElementById('invoice-total').textContent = formatMoney(grandTotal);
         }
+
+        function addInvoiceItem() {
+            const descInput = document.getElementById('new-item-desc');
+            const qtyInput = document.getElementById('new-item-qty');
+            const priceInput = document.getElementById('new-item-price');
+
+            const desc = descInput.value.trim();
+            const qty = parseInt(qtyInput.value);
+            const price = parseFloat(priceInput.value);
+
+            if (!desc || isNaN(qty) || isNaN(price) || qty < 1 || price < 0) {
+                showToast('Veuillez remplir correctement les champs.', 'error');
+                return;
+            }
+
+            const newItem = {
+                id: Date.now(),
+                desc: desc,
+                qty: qty,
+                price: price
+            };
+
+            invoiceItems.push(newItem);
+            renderInvoiceItems();
+
+            // Reset inputs
+            descInput.value = '';
+            qtyInput.value = '1';
+            priceInput.value = '';
+            descInput.focus();
+        }
+
+        function removeInvoiceItem(id) {
+            invoiceItems = invoiceItems.filter(item => item.id !== id);
+            renderInvoiceItems();
+        }
+
+        // Initialize invoice display
+        renderInvoiceItems();
+
+
+        // --- TASK MANAGER LOGIC ---
+        let tasks = [
+            { id: 101, text: "Envoyer le devis à l'agence Dupont", done: false },
+            { id: 102, text: "Faire la déclaration URSSAF", done: true }
+        ];
+
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            const emptyState = document.getElementById('empty-tasks');
+            const counter = document.getElementById('task-counter');
+            
+            list.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                list.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+            } else {
+                list.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                
+                tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.className = `flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-slate-100 transition-all ${task.done ? 'opacity-60 bg-slate-50' : 'hover:border-brand-300'}`;
+                    
+                    li.innerHTML = `
+                        <div class="flex items-center gap-4 flex-1">
+                            <button onclick="toggleTask(${task.id})" class="text-2xl transition-colors focus:outline-none ${task.done ? 'text-green-500' : 'text-slate-300 hover:text-brand-500'}">
+                                ${task.done ? '<i class="ph-fill ph-check-circle"></i>' : '<i class="ph ph-circle"></i>'}
+                            </button>
+                            <span class="text-slate-800 text-lg ${task.done ? 'line-through text-slate-500' : ''}">${task.text}</span>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" class="text-slate-300 hover:text-red-500 p-2 transition-colors ml-4 focus:outline-none">
+                            <i class="ph-bold ph-trash"></i>
+                        </button>
+                    `;
+                    list.appendChild(li);
+                });
+            }
+
+            const pendingCount = tasks.filter(t => !t.done).length;
+            counter.textContent = `${pendingCount} restante${pendingCount > 1 ? 's' : ''}`;
+        }
+
+        document.getElementById('task-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('new-task-input');
+            const text = input.value.trim();
+            
+            if(text) {
+                tasks.unshift({ id: Date.now(), text: text, done: false });
+                input.value = '';
+                renderTasks();
+            }
+        });
+
+        function toggleTask(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                task.done = !task.done;
+                renderTasks();
+            }
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        // Initialize Tasks
+        renderTasks();
+
+
+        // --- EMAIL TEMPLATES LOGIC ---
+        function copyEmail(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            
+            try {
+                // Fallback document.execCommand for older browsers / iframe restrictions
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('Email copié dans le presse-papiers !');
+                } else {
+                    showToast('Erreur lors de la copie', 'error');
+                }
+            } catch (err) {
+                showToast('Erreur de copie (Navigateur non supporté)', 'error');
+            }
+            
+            // Remove selection so it doesn't look ugly after clicking
+            window.getSelection().removeAllRanges();
+        }
+
     </script>
 </body>
 </html>
