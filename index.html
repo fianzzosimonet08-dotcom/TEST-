@@ -1,52 +1,344 @@
-<!-- 1. Bouton de la barre de navigation (Vers la ligne 71) -->
-<!-- REMPLACER : -->
-<a href="VOTRE_LIEN_STRIPE" target="_blank" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-full font-medium transition shadow-lg shadow-brand-500/30">Essai gratuit</a>
-<!-- PAR : -->
-<a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-full font-medium transition shadow-lg shadow-brand-500/30">Tester gratuitement</a>
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centrio | Ne gérez plus l'administratif. Dirigez votre entreprise.</title>
+    <meta name="description" content="L'outil tout-en-un au design épuré qui fait gagner 10 heures par semaine aux TPE et PME.">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            900: '#134e4a',
+                        },
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .faq-answer.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        .faq-icon.open {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased selection:bg-brand-500 selection:text-white">
 
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+                    <div class="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <span class="font-bold text-2xl tracking-tight text-gray-900">Centrio</span>
+                </div>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#features" class="text-gray-600 hover:text-brand-600 font-medium transition">Fonctionnalités</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-brand-600 font-medium transition">Accès Bêta</a>
+                    <a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-full font-medium transition shadow-lg shadow-brand-500/30">Créer mon compte gratuit</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-<!-- 2. Bouton principal "Hero" et le sous-titre (Vers la ligne 87) -->
-<!-- REMPLACER : -->
-<a href="VOTRE_LIEN_STRIPE" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-lg transition shadow-xl shadow-gray-900/20 text-center">
-    Commencer mon essai gratuit
-</a>
-<p class="mt-4 text-sm text-gray-400 font-medium">Sans engagement • Configuration en 5 minutes • Support inclus</p>
-<!-- PAR : -->
-<a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-lg transition shadow-xl shadow-gray-900/20 text-center">
-    Accéder à la version gratuite
-</a>
-<p class="mt-4 text-sm text-gray-400 font-medium">100% Gratuit pendant la phase de test • Places limitées</p>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 text-brand-600 font-medium text-sm mb-8 border border-brand-100">
+                <span class="flex h-2 w-2 rounded-full bg-brand-500 animate-pulse"></span>
+                Phase de lancement : Accès 100% gratuit
+            </div>
+            <h1 class="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-gray-900 mb-6 leading-tight">
+                Ne gérez plus l'administratif. <br class="hidden md:block">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-500 to-blue-600">Dirigez votre entreprise.</span>
+            </h1>
+            <p class="mt-4 text-xl text-gray-500 max-w-3xl mx-auto mb-10 leading-relaxed">
+                Centralisez vos échanges, automatisez vos factures et signez vos contrats au même endroit. L'outil tout-en-un au design épuré, actuellement gratuit pour nos premiers testeurs.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-gray-900 hover:bg-black text-white rounded-full font-semibold text-lg transition shadow-xl shadow-gray-900/20 text-center">
+                    Accéder à la version gratuite
+                </a>
+            </div>
+            <p class="mt-4 text-sm text-gray-400 font-medium">Aucune carte requise • Version Bêta • Places limitées</p>
+            
+            <!-- Mockup Dashboard -->
+            <div class="mt-20 relative max-w-5xl mx-auto">
+                <div class="absolute inset-0 bg-gradient-to-t from-gray-50 to-transparent z-10 h-full w-full pointer-events-none rounded-t-2xl"></div>
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2000" alt="Dashboard Centrio" class="rounded-2xl shadow-2xl border border-gray-200 object-cover object-top h-[500px] w-full" style="object-position: 50% 0%;">
+            </div>
+        </div>
+    </section>
 
+    <!-- Problem Section -->
+    <section class="py-24 bg-dark text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold mb-6">Vous n'avez pas créé votre entreprise pour courir après des factures.</h2>
+                <p class="text-gray-400 text-lg">La charge mentale administrative détruit la croissance des petites entreprises. Reconnaissez-vous ces situations ?</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Point 1 -->
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition">
+                    <div class="w-12 h-12 bg-red-500/20 text-red-400 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">L'éparpillement</h3>
+                    <p class="text-gray-400">Vos clients vous écrivent sur WhatsApp, par email et sur LinkedIn. Vous perdez le fil des discussions et des accords.</p>
+                </div>
+                <!-- Point 2 -->
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition">
+                    <div class="w-12 h-12 bg-orange-500/20 text-orange-400 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">La gêne de la relance</h3>
+                    <p class="text-gray-400">Réclamer un paiement en retard dégrade vos relations commerciales, vous coûte de l'énergie et fragilise votre trésorerie.</p>
+                </div>
+                <!-- Point 3 -->
+                <div class="bg-white/5 border border-white/10 p-8 rounded-2xl backdrop-blur-sm hover:bg-white/10 transition">
+                    <div class="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">La friction documentaire</h3>
+                    <p class="text-gray-400">Imprimer, signer, scanner. Un processus archaïque, lent et frustrant qui vous fait régulièrement perdre des contrats.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- 3. Le bloc Prix (Vers la ligne 218) -->
-<!-- REMPLACER ce bloc : -->
-<h3 class="text-2xl font-bold text-gray-900 mb-2">Plan Croissance</h3>
-<p class="text-gray-500 mb-6 font-medium text-sm">Rentabilisé dès la première facture impayée récupérée.</p>
-<div class="flex justify-center items-baseline mb-4">
-    <span class="text-5xl font-extrabold text-gray-900">119,99€</span>
-    <span class="text-xl text-gray-500 ml-2">/mois</span>
-</div>
-<a href="VOTRE_LIEN_STRIPE" target="_blank" class="block w-full text-center bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-xl transition shadow-lg shadow-brand-500/30">
-    Démarrer l'essai de 14 jours
-</a>
-<!-- PAR : -->
-<h3 class="text-2xl font-bold text-gray-900 mb-2">Accès Pionnier (Bêta)</h3>
-<p class="text-gray-500 mb-6 font-medium text-sm">Aidez-nous à peaufiner l'outil en le testant en avant-première.</p>
-<div class="flex justify-center items-baseline mb-4">
-    <span class="text-5xl font-extrabold text-gray-900">0€</span>
-    <span class="text-xl text-gray-500 ml-2">pour les 50 premiers</span>
-</div>
-<a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="block w-full text-center bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-xl transition shadow-lg shadow-brand-500/30">
-    Rejoindre les testeurs gratuits
-</a>
+    <!-- Features Section -->
+    <section id="features" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-32">
+            <!-- Feature 1 -->
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="w-12 h-12 bg-brand-50 text-brand-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Portail Client Unifié : Offrez une expérience 5 étoiles</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed">Donnez à vos clients un espace privé et sécurisé, à l'image de votre marque. Ils y retrouvent tous leurs devis, factures et historiques d'échanges en temps réel.</p>
+                </div>
+                <div class="bg-gray-100 rounded-2xl aspect-video p-8 flex items-center justify-center relative overflow-hidden shadow-inner">
+                    <div class="absolute inset-0 bg-gradient-to-br from-brand-100 to-blue-50 opacity-50"></div>
+                    <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm z-10 border border-gray-100">
+                        <div class="h-4 w-24 bg-gray-200 rounded mb-4"></div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-100"></div><div class="h-3 w-20 bg-gray-200 rounded"></div></div>
+                                <div class="h-5 w-16 bg-green-100 rounded-full"></div>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-brand-100"></div><div class="h-3 w-24 bg-gray-200 rounded"></div></div>
+                                <div class="h-5 w-16 bg-green-100 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Feature 2 -->
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="order-2 lg:order-1 bg-gray-100 rounded-2xl aspect-video p-8 flex items-center justify-center relative overflow-hidden shadow-inner">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-100 to-brand-50 opacity-50"></div>
+                    <div class="bg-white p-6 rounded-xl shadow-xl w-full max-w-sm z-10 border border-gray-100 flex flex-col gap-4">
+                        <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-lg shadow-sm"><div class="w-2 h-2 rounded-full bg-green-500"></div><div class="h-3 w-full bg-gray-100 rounded"></div></div>
+                        <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-lg shadow-sm bg-brand-50"><div class="w-2 h-2 rounded-full bg-orange-500"></div><div class="h-3 w-3/4 bg-brand-200 rounded"></div></div>
+                        <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-lg shadow-sm"><div class="w-2 h-2 rounded-full bg-gray-300"></div><div class="h-3 w-5/6 bg-gray-100 rounded"></div></div>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Boîte de Réception Omnicanale : Zéro message ignoré</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed">Emails, WhatsApp, réseaux sociaux... Tout arrive au même endroit. Transformez le chaos des communications en un flux de travail fluide et collaboratif.</p>
+                </div>
+            </div>
 
-<!-- 4. Bouton final tout en bas (Vers la ligne 276) -->
-<!-- REMPLACER : -->
-<a href="VOTRE_LIEN_STRIPE" target="_blank" class="inline-block bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 px-10 rounded-full text-lg transition shadow-xl shadow-brand-500/20">
-    Lancer mon essai de 14 jours
-</a>
-<!-- PAR : -->
-<a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="inline-block bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 px-10 rounded-full text-lg transition shadow-xl shadow-brand-500/20">
-    Je veux tester gratuitement
-</a>
+            <!-- Feature 3 -->
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="w-12 h-12 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Relances Intelligentes : Faites-vous payer, sans y penser</h2>
+                    <p class="text-lg text-gray-600 leading-relaxed">Notre système détecte les retards et envoie des relances courtoises, personnalisées et automatiques. Préservez votre trésorerie sans effort.</p>
+                </div>
+                <div class="bg-gray-100 rounded-2xl aspect-video p-8 flex items-center justify-center relative overflow-hidden shadow-inner">
+                    <div class="absolute inset-0 bg-gradient-to-br from-orange-100 to-red-50 opacity-50"></div>
+                    <div class="bg-white p-4 rounded-xl shadow-2xl w-full max-w-sm z-10 border border-gray-100 flex items-start gap-4 transform translate-x-4">
+                        <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 text-orange-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                        <div>
+                            <div class="text-sm font-semibold text-gray-900 mb-1">Relance automatique envoyée</div>
+                            <div class="text-xs text-gray-500">Facture #1042 - Client XYZ relancé avec succès.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing (Beta Access) Section -->
+    <section id="pricing" class="py-24 bg-white relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-50 rounded-full blur-3xl opacity-50"></div>
+            <div class="absolute bottom-0 left-0 w-72 h-72 bg-blue-50 rounded-full blur-3xl opacity-50"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="bg-brand-100 text-brand-700 font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wide mb-4 inline-block">Offre de lancement</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 mt-4">Un outil premium. Actuellement 100% gratuit.</h2>
+                <p class="text-xl text-gray-600">Aidez-nous à peaufiner l'outil de demain. Inscrivez-vous gratuitement et participez à notre phase de Bêta fermée.</p>
+            </div>
+
+            <div class="max-w-lg mx-auto bg-white rounded-3xl shadow-2xl shadow-gray-200/50 border border-brand-200 overflow-hidden transform hover:-translate-y-1 transition duration-300">
+                <div class="p-10 text-center border-b border-gray-100 bg-gray-50 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">Places limitées</div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Accès Pionnier (Bêta)</h3>
+                    <p class="text-gray-500 mb-6 font-medium text-sm">Profitez de toutes nos fonctionnalités gratuitement.</p>
+                    <div class="flex justify-center items-baseline mb-4">
+                        <span class="text-6xl font-extrabold text-gray-900">0€</span>
+                        <span class="text-xl text-gray-500 ml-2">/ pour l'instant</span>
+                    </div>
+                    <a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="block w-full text-center bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-8 rounded-xl transition shadow-lg shadow-brand-500/30">
+                        Réserver mon accès gratuit
+                    </a>
+                    <p class="text-xs text-gray-400 mt-4">Aucune carte bancaire requise.</p>
+                </div>
+                <div class="p-10 bg-white">
+                    <ul class="space-y-4">
+                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Portail client complet</li>
+                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Relances automatiques intelligentes</li>
+                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Signatures électroniques certifiées</li>
+                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Boîte de réception centralisée</li>
+                        <li class="flex items-center text-gray-600"><svg class="w-5 h-5 text-brand-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Un accès privilégié à nos nouveautés</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-24 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Questions fréquentes</h2>
+            
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer faq-item shadow-sm">
+                    <div class="px-6 py-5 flex justify-between items-center bg-white hover:bg-gray-50 transition" onclick="toggleFaq(this)">
+                        <h3 class="font-semibold text-gray-900">L'outil est-il vraiment gratuit ?</h3>
+                        <svg class="w-5 h-5 text-gray-400 faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <div class="faq-answer bg-white px-6 pb-5 text-gray-600">
+                        <div class="pt-2">Oui. Actuellement en phase de lancement (Bêta test), Centrio est proposé 100% gratuitement. Nous voulons construire le meilleur outil possible en récoltant vos avis et retours.</div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer faq-item shadow-sm">
+                    <div class="px-6 py-5 flex justify-between items-center bg-white hover:bg-gray-50 transition" onclick="toggleFaq(this)">
+                        <h3 class="font-semibold text-gray-900">Dois-je renseigner ma carte bancaire ?</h3>
+                        <svg class="w-5 h-5 text-gray-400 faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <div class="faq-answer bg-white px-6 pb-5 text-gray-600">
+                        <div class="pt-2">Absolument pas. Vous n'avez besoin d'aucun moyen de paiement pour vous inscrire à notre liste d'accès gratuit. Votre adresse email suffit.</div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden cursor-pointer faq-item shadow-sm">
+                    <div class="px-6 py-5 flex justify-between items-center bg-white hover:bg-gray-50 transition" onclick="toggleFaq(this)">
+                        <h3 class="font-semibold text-gray-900">Les signatures électroniques ont-elles une valeur légale ?</h3>
+                        <svg class="w-5 h-5 text-gray-400 faq-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                    <div class="faq-answer bg-white px-6 pb-5 text-gray-600">
+                        <div class="pt-2">Oui. Nos futures intégrations de signatures respecteront les normes européennes eIDAS, garantissant une conformité légale totale pour tous vos contrats B2B.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final CTA & Footer -->
+    <footer class="bg-dark text-white pt-24 pb-12">
+        <div class="max-w-4xl mx-auto px-4 text-center mb-20">
+            <h2 class="text-4xl font-bold mb-6">Prêt à transformer la gestion de votre PME ?</h2>
+            <p class="text-xl text-gray-400 mb-10">Rejoignez les entrepreneurs pionniers qui testent notre outil gratuitement.</p>
+            <a href="VOTRE_LIEN_FORMULAIRE" target="_blank" class="inline-block bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 px-10 rounded-full text-lg transition shadow-xl shadow-brand-500/20">
+                S'inscrire gratuitement
+            </a>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-brand-600 rounded flex items-center justify-center">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                </div>
+                <span class="font-bold text-xl tracking-tight">Centrio</span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-6 text-sm text-gray-500">
+                <a href="#" class="hover:text-white transition">Mentions légales</a>
+                <a href="#" class="hover:text-white transition">Politique de confidentialité</a>
+                <a href="#" class="hover:text-white transition">Contact</a>
+            </div>
+            <div class="text-sm text-gray-500">
+                © 2024 Centrio. Version Bêta fermée.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script pour la FAQ -->
+    <script>
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            document.querySelectorAll('.faq-answer').forEach(el => {
+                if(el !== answer) {
+                    el.classList.remove('open');
+                    el.previousElementSibling.querySelector('.faq-icon').classList.remove('open');
+                }
+            });
+
+            answer.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+    </script>
+</body>
+</html>
