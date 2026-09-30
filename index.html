@@ -1,826 +1,1009 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProFacile - Le Couteau Suisse de l'Entrepreneur</title>
-    
-    <!-- Tailwind CSS -->
+    <title>ProFacile - La boîte à outils complète pour entreprises</title>
+    <!-- Tailwind CSS Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Configuration Tailwind -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9',
-                            600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e',
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
                         }
-                    },
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                    }
                 }
             }
         }
     </script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
-
-    <!-- QR Code Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .nav-active { background-color: #e0f2fe; color: #0284c7; border-right: 4px solid #0284c7; font-weight: 600; }
-        .nav-item { transition: all 0.2s ease; }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
-        
-        /* Outil Signature Email - Table styling for copy/paste */
-        .sig-table { font-family: Arial, sans-serif; font-size: 14px; color: #333; }
-        
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+    <!-- FontAwesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS (xlsx) pour l'export Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- jsPDF pour l'export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex">
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col font-sans">
 
-    <aside id="sidebar" class="bg-white w-72 h-full border-r border-slate-200 flex flex-col transition-transform duration-300 absolute z-20 md:relative md:translate-x-0 -translate-x-full shadow-lg md:shadow-none shrink-0">
-        <div class="p-5 flex items-center justify-between border-b border-slate-100 shrink-0">
-            <div class="flex items-center gap-2 text-brand-600">
-                <i class="ph-fill ph-toolbox text-3xl"></i>
-                <span class="text-2xl font-bold tracking-tight">ProFacile</span>
+    <!-- Top Navigation Bar -->
+    <header class="bg-slate-900 text-white shadow-md z-20 flex-shrink-0">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                <div class="bg-brand-500 text-white p-2 rounded-xl shadow-inner flex items-center justify-center w-10 h-10">
+                    <i class="fa-solid fa-briefcase text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black tracking-tight bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">ProFacile</span>
+                    <span class="block text-[10px] text-slate-400 font-medium uppercase tracking-wider">Solution Pro Gratuite</span>
+                </div>
             </div>
-            <button id="close-sidebar" class="md:hidden text-slate-400 hover:text-slate-600">
-                <i class="ph ph-x text-xl"></i>
-            </button>
-        </div>
-        
-        <nav class="flex-1 overflow-y-auto py-4 flex flex-col pb-20">
-            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-item nav-active flex items-center gap-3 px-6 py-2.5 text-left w-full mb-4">
-                <i class="ph ph-squares-four text-xl"></i> <span>Tableau de bord</span>
-            </button>
 
-            <!-- Group: Équipe & RH -->
-            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Équipe & RH</div>
-            <button onclick="navigate('employees')" id="nav-employees" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full mb-4">
-                <i class="ph ph-users text-xl"></i> <span>Gestion des Employés</span>
-            </button>
-
-            <!-- Group: Finance & Gestion -->
-            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Finance & Gestion</div>
-            <button onclick="navigate('invoices')" id="nav-invoices" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-receipt text-xl"></i> <span>Factures Rapides</span>
-            </button>
-            <button onclick="navigate('tva')" id="nav-tva" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-calculator text-xl"></i> <span>TVA & Marge</span>
-            </button>
-            <button onclick="navigate('mileage')" id="nav-mileage" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full mb-4">
-                <i class="ph ph-car text-xl"></i> <span>Frais Kilométriques</span>
-            </button>
-
-            <!-- Group: Organisation & Prod -->
-            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Organisation & Prod</div>
-            <button onclick="navigate('planning')" id="nav-planning" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-calendar-check text-xl"></i> <span>Planning Journalier</span>
-            </button>
-            <button onclick="navigate('tasks')" id="nav-tasks" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-check-square-offset text-xl"></i> <span>Tâches à faire</span>
-            </button>
-            <button onclick="navigate('pomodoro')" id="nav-pomodoro" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-timer text-xl"></i> <span>Minuteur Pomodoro</span>
-            </button>
-            <button onclick="navigate('archives')" id="nav-archives" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full mb-4">
-                <i class="ph ph-archive text-xl"></i> <span>Archives</span>
-            </button>
-
-            <!-- Group: Communication -->
-            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Communication</div>
-            <button onclick="navigate('emails')" id="nav-emails" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-envelope-simple-open text-xl"></i> <span>Modèles d'Emails</span>
-            </button>
-            <button onclick="navigate('signature')" id="nav-signature" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-pen-nib text-xl"></i> <span>Signature Email</span>
-            </button>
-            <button onclick="navigate('whatsapp')" id="nav-whatsapp" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full mb-4">
-                <i class="ph ph-whatsapp-logo text-xl"></i> <span>Lien WhatsApp</span>
-            </button>
-
-            <!-- Group: Outils Pratiques -->
-            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Outils Pratiques</div>
-            <button onclick="navigate('text-cleaner')" id="nav-text-cleaner" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-text-aa text-xl"></i> <span>Nettoyeur de Texte</span>
-            </button>
-            <button onclick="navigate('seo')" id="nav-seo" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-chart-bar text-xl"></i> <span>Compteur SEO</span>
-            </button>
-            <button onclick="navigate('password')" id="nav-password" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-key text-xl"></i> <span>Mots de Passe Sécurisés</span>
-            </button>
-            <button onclick="navigate('qrcode')" id="nav-qrcode" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-qr-code text-xl"></i> <span>Générateur QR Code</span>
-            </button>
-            <button onclick="navigate('timezones')" id="nav-timezones" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
-                <i class="ph ph-globe text-xl"></i> <span>Fuseaux Horaires</span>
-            </button>
-        </nav>
-    </aside>
-
-    <main class="flex-1 h-full flex flex-col overflow-hidden relative">
-        
-        <!-- Top Header -->
-        <header class="bg-white h-16 border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 shrink-0 shadow-sm z-10">
-            <div class="flex items-center gap-4">
-                <button id="open-sidebar" class="md:hidden text-slate-500 hover:text-slate-800">
-                    <i class="ph ph-list text-2xl"></i>
+            <div class="hidden md:flex items-center space-x-1">
+                <button onclick="switchTab('dashboard')" id="nav-btn-dashboard" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors bg-brand-600 text-white">
+                    <i class="fa-solid fa-house mr-1.5"></i> Accueil
                 </button>
-                <h1 id="page-title" class="text-xl font-bold text-slate-800">Vue d'ensemble</h1>
+                <button onclick="switchTab('tools')" id="nav-btn-tools" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-toolbox mr-1.5"></i> Tous les Outils (<span id="tool-count">15</span>)
+                </button>
+                <button onclick="switchTab('planning')" id="nav-btn-planning" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-calendar-days mr-1.5"></i> Planning & Tâches
+                </button>
+                <button onclick="switchTab('archives')" id="nav-btn-archives" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-box-archive mr-1.5"></i> Archives
+                </button>
+                <button onclick="switchTab('team')" id="nav-btn-team" class="nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white">
+                    <i class="fa-solid fa-users-gear mr-1.5"></i> Équipe & RH
+                </button>
             </div>
-            <div class="text-sm text-slate-500 hidden sm:flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full font-medium">
-                <i class="ph-fill ph-shield-check text-green-500 text-lg"></i> 100% Gratuit & Privé
-            </div>
-        </header>
 
-        <!-- Scrollable Content Area -->
-        <div class="flex-1 overflow-y-auto p-4 sm:p-8 w-full bg-slate-50/50">
-            
-            <div id="sec-dashboard" class="section-content fade-in max-w-6xl mx-auto">
-                <div class="bg-gradient-to-r from-brand-600 to-brand-800 rounded-2xl p-8 sm:p-10 shadow-lg mb-8 text-white">
-                    <h2 class="text-3xl sm:text-4xl font-bold mb-4">Bienvenue sur votre Couteau Suisse Pro 🛠️️</h2>
-                    <p class="text-brand-100 text-lg leading-relaxed max-w-3xl">
-                        Nous avons rassemblé vos <strong>outils indispensables</strong> pour gérer votre entreprise, votre équipe et votre productivité. Calculs, RH, facturation... Tout est là, gratuit, et traité directement sur votre navigateur.
+            <!-- Mobile menu button -->
+            <div class="md:hidden flex items-center">
+                <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2 focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile dropdown menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-800 px-4 pt-2 pb-4 space-y-1 border-t border-slate-700">
+            <button onclick="switchTab('dashboard'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-white hover:bg-slate-700">Accueil</button>
+            <button onclick="switchTab('tools'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white">Tous les Outils</button>
+            <button onclick="switchTab('planning'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white">Planning & Tâches</button>
+            <button onclick="switchTab('archives'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white">Archives</button>
+            <button onclick="switchTab('team'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-700 hover:text-white">Équipe & RH</button>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="flex-1 overflow-y-auto">
+
+        <!-- ==================== TAB: DASHBOARD ==================== -->
+        <div id="tab-dashboard" class="tab-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+            <!-- Hero Section -->
+            <div class="bg-gradient-to-r from-brand-600 to-indigo-800 rounded-2xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-center">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-xl mb-6 md:mb-0">
+                    <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3 inline-block">100% Gratuit & Sans Pub</span>
+                    <h1 class="text-3xl sm:text-4xl font-black tracking-tight mb-3">La boîte à outils ultime de votre entreprise</h1>
+                    <p class="text-indigo-100 text-sm sm:text-base leading-relaxed mb-6">
+                        Gérez vos factures, calculez vos marges, planifiez vos journées par date, suivez vos clients, et pilotez votre équipe en toute simplicité.
                     </p>
-                </div>
-                
-                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><i class="ph-fill ph-star text-amber-400"></i> Outils recommandés</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <button onclick="navigate('employees')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group border-t-4 border-t-brand-500">
-                        <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-users text-2xl"></i></div>
-                        <h3 class="text-xl font-semibold mb-2">Gestion des Employés</h3>
-                        <p class="text-slate-500 text-sm">Suivez les performances, notes et avertissements de votre équipe.</p>
-                    </button>
-                    <button onclick="navigate('planning')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group border-t-4 border-t-brand-500">
-                        <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-calendar-check text-2xl"></i></div>
-                        <h3 class="text-xl font-semibold mb-2">Planning Journalier</h3>
-                        <p class="text-slate-500 text-sm">Organisez vos actions et appels de la journée.</p>
-                    </button>
-                    <button onclick="navigate('invoices')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
-                        <div class="w-12 h-12 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-receipt text-2xl"></i></div>
-                        <h3 class="text-xl font-semibold mb-2">Facturation Eclair</h3>
-                        <p class="text-slate-500 text-sm">Générez une facture chiffrée en 30s.</p>
-                    </button>
-                    <button onclick="navigate('tva')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
-                        <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-calculator text-2xl"></i></div>
-                        <h3 class="text-xl font-semibold mb-2">Calcul TVA & Marge</h3>
-                        <p class="text-slate-500 text-sm">Finis les maux de tête pour calculer HT/TTC et marges.</p>
-                    </button>
-                    <button onclick="navigate('whatsapp')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
-                        <div class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-whatsapp-logo text-2xl"></i></div>
-                        <h3 class="text-xl font-semibold mb-2">Lien WhatsApp Pro</h3>
-                        <p class="text-slate-500 text-sm">Créez un lien direct pour qu'on vous contacte en un clic.</p>
-                    </button>
-                    <button onclick="navigate('qrcode')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
-                        <div class="w-12 h-12 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-qr-code text-2xl"></i></div>
-                        <h3 class="text-xl font-semibold mb-2">Générateur QR Code</h3>
-                        <p class="text-slate-500 text-sm">Transformez n'importe quel lien en QR Code imprimable.</p>
-                    </button>
-                </div>
-            </div>
-
-            <div id="sec-employees" class="section-content hidden max-w-5xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                    <h2 class="text-2xl font-bold text-slate-800">Gestion de l'Équipe</h2>
-                    <form id="add-employee-form" class="flex gap-2 w-full sm:w-auto bg-white p-2 rounded-lg shadow-sm border border-slate-200">
-                        <input type="text" id="emp-name" placeholder="Nom complet" required class="border-none bg-slate-50 px-3 py-2 rounded outline-none focus:ring-2 focus:ring-brand-500 text-sm w-full sm:w-40">
-                        <input type="text" id="emp-role" placeholder="Poste / Rôle" required class="border-none bg-slate-50 px-3 py-2 rounded outline-none focus:ring-2 focus:ring-brand-500 text-sm w-full sm:w-32">
-                        <button type="submit" class="bg-brand-600 text-white px-4 py-2 rounded font-medium hover:bg-brand-700 transition"><i class="ph-bold ph-plus"></i></button>
-                    </form>
-                </div>
-
-                <!-- Employé du mois Banner -->
-                <div id="best-employee-banner" class="hidden bg-gradient-to-r from-amber-400 to-orange-500 rounded-xl p-6 text-white shadow-lg mb-8 flex items-center gap-6 relative overflow-hidden">
-                    <i class="ph-fill ph-trophy text-6xl opacity-80 z-10"></i>
-                    <div class="z-10">
-                        <h3 class="text-sm font-bold uppercase tracking-wider text-amber-900/50 mb-1">Employé du mois</h3>
-                        <p class="text-2xl font-bold" id="best-employee-name">Nom</p>
-                        <p class="text-amber-100 text-sm" id="best-employee-stats">Félicitations pour ses performances exceptionnelles !</p>
-                    </div>
-                    <!-- Background decoration -->
-                    <i class="ph-fill ph-star absolute -right-10 -bottom-10 text-9xl opacity-10"></i>
-                </div>
-
-                <div id="employees-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Employees injected here -->
-                </div>
-                <div id="no-employees-msg" class="text-center py-12 text-slate-400 bg-white rounded-xl border border-slate-200 border-dashed">
-                    <i class="ph ph-users text-5xl mb-3"></i><p>Aucun employé dans votre équipe.</p>
-                </div>
-            </div>
-
-            <div id="sec-planning" class="section-content hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-6 bg-purple-50 border-b border-purple-100 flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-bold text-purple-900">Planning Journalier</h2>
-                            <p class="text-purple-600 text-sm">Gérez vos actions et appels urgents.</p>
-                        </div>
-                        <div class="text-right hidden sm:block">
-                            <span class="text-sm text-purple-500 font-medium block" id="planning-date">Aujourd'hui</span>
-                        </div>
-                    </div>
-                    
-                    <form id="planning-form" class="p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="plan-task" placeholder="Action ou tâche à réaliser..." required class="flex-1 border border-slate-300 p-3 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
-                        <input type="text" id="plan-phone" placeholder="N° de Tél (optionnel)" class="w-full sm:w-48 border border-slate-300 p-3 rounded-lg outline-none focus:border-purple-500">
-                        <button type="submit" class="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 whitespace-nowrap">Planifier</button>
-                    </form>
-
-                    <div class="p-4 bg-white min-h-[300px]">
-                        <ul id="planning-list" class="space-y-2"></ul>
-                        <div id="no-planning" class="text-center py-12 text-slate-400">
-                            <i class="ph ph-coffee text-5xl mb-3"></i><p>Votre planning est vide, profitez-en !</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="sec-archives" class="section-content hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-6 bg-slate-100 border-b border-slate-200 flex justify-between items-center">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-700">Archives</h2>
-                            <p class="text-slate-500 text-sm">Historique de vos actions accomplies.</p>
-                        </div>
-                        <button onclick="clearArchives()" class="text-red-500 hover:bg-red-50 px-3 py-1.5 rounded-lg text-sm font-medium transition flex items-center gap-2"><i class="ph-bold ph-trash"></i> Vider</button>
-                    </div>
-                    <div class="p-4 bg-slate-50 min-h-[400px]">
-                        <ul id="archives-list" class="space-y-2"></ul>
-                        <div id="no-archives" class="text-center py-12 text-slate-400">
-                            <i class="ph ph-archive-box text-5xl mb-3"></i><p>Aucune archive pour le moment.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Factures -->
-            <div id="sec-invoices" class="section-content hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold">Calculateur de Facture Rapide</h2>
-                        <button onclick="window.print()" class="bg-slate-100 text-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition">
-                            <i class="ph ph-printer"></i> Imprimer / PDF
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('tools')" class="bg-white text-brand-700 hover:bg-indigo-50 font-bold px-5 py-2.5 rounded-xl shadow transition text-sm flex items-center">
+                            <i class="fa-solid fa-rocket mr-2"></i> Explorer les outils
+                        </button>
+                        <button onclick="switchTab('planning')" class="bg-indigo-700/80 text-white hover:bg-indigo-700 font-bold px-5 py-2.5 rounded-xl border border-indigo-400/30 transition text-sm flex items-center">
+                            <i class="fa-solid fa-calendar-day mr-2"></i> Planning du jour
                         </button>
                     </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                </div>
+                <div class="relative z-10 bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/20 text-center w-full md:w-72 shadow-lg">
+                    <div class="text-xs font-bold uppercase tracking-wider text-indigo-200 mb-1">Employé du Mois 🏆</div>
+                    <div id="hero-star-employee" class="text-xl font-black text-amber-300 mb-1">Aucun pour l'instant</div>
+                    <div id="hero-star-score" class="text-xs text-indigo-100">Ajoutez des points dans l'onglet Équipe & RH</div>
+                </div>
+            </div>
+
+            <!-- Quick Access Grid -->
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-slate-900 flex items-center">
+                        <i class="fa-solid fa-bolt text-amber-500 mr-2"></i> Outils les plus utilisés
+                    </h2>
+                    <button onclick="switchTab('tools')" class="text-sm font-semibold text-brand-600 hover:text-brand-700">Voir les 15 outils &rarr;</button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Card 1 -->
+                    <div onclick="openTool('facture')" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:border-brand-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-50 text-brand-600 flex items-center justify-center mb-3 group-hover:bg-brand-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-file-invoice-dollar text-lg"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 mb-1">Générateur de Factures</h3>
+                        <p class="text-xs text-slate-500">Créez et exportez vos factures pros en PDF ou impression.</p>
+                    </div>
+                    <!-- Card 2 -->
+                    <div onclick="openTool('tva')" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:border-brand-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 group-hover:bg-emerald-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-percent text-lg"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 mb-1">Calculateur de TVA</h3>
+                        <p class="text-xs text-slate-500">Passez instantanément du HT au TTC et inversement.</p>
+                    </div>
+                    <!-- Card 3 -->
+                    <div onclick="openTool('marge')" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:border-brand-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mb-3 group-hover:bg-amber-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-chart-line text-lg"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 mb-1">Calculateur de Marge</h3>
+                        <p class="text-xs text-slate-500">Calculez prix de vente, marge commerciale et taux de marque.</p>
+                    </div>
+                    <!-- Card 4 -->
+                    <div onclick="openTool('contrat')" class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 hover:border-brand-500 hover:shadow-md transition cursor-pointer group">
+                        <div class="w-10 h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-3 group-hover:bg-purple-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-file-contract text-lg"></i>
+                        </div>
+                        <h3 class="font-bold text-slate-900 mb-1">Modèles de Contrats</h3>
+                        <p class="text-xs text-slate-500">Devis, CDD, CDI, CGV prêts à l'emploi et personnalisables.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: TOOLS (15 TOOLS) ==================== -->
+        <div id="tab-tools" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">Boîte à outils de l'entreprise</h2>
+                    <p class="text-slate-500 text-sm">Tous les outils indispensables pour résoudre les problèmes et tâches fastidieuses.</p>
+                </div>
+                <div class="w-full sm:w-64">
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" id="tool-search" oninput="filterTools()" placeholder="Rechercher un outil..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tool selector tabs or grid -->
+            <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Sidebar menu of tools -->
+                <div class="md:col-span-1 bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-1 h-fit sticky top-4">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-3 py-2">Liste des 15 outils</h3>
+                    <div class="space-y-1 max-h-[600px] overflow-y-auto pr-1" id="tool-nav-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Tool Display Area -->
+                <div class="md:col-span-2 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200" id="tool-display-container">
+                    <!-- Dynamic Tool Form Rendered Here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: PLANNING (CALENDAR & DAILY TASKS) ==================== -->
+        <div id="tab-planning" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight flex items-center">
+                        <i class="fa-solid fa-calendar-days text-brand-600 mr-3"></i> Planning Journalier & Clients
+                    </h2>
+                    <p class="text-slate-500 text-sm">Organisez vos tâches par date exacte. Appelez vos clients directement et validez-les pour les envoyer dans les archives.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <label class="text-sm font-medium text-slate-700">Choisir une date :</label>
+                    <input type="date" id="planning-date-picker" onchange="renderPlanning()" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold focus:outline-none focus:border-brand-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Form to add a task for the selected date -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-4">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center border-b pb-3">
+                        <i class="fa-solid fa-plus-circle text-brand-600 mr-2"></i> Ajouter une action pour le <span id="form-date-label" class="text-brand-600 ml-1">auj.</span>
+                    </h3>
+                    <form id="task-form" onsubmit="addTask(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Client</label>
-                            <input type="text" placeholder="Nom de l'entreprise..." class="w-full border-slate-300 rounded-lg border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nom du Client / Tâches</label>
+                            <input type="text" id="task-client" required placeholder="Ex: Jean Dupont (Entreprise ABC)" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Date</label>
-                            <input type="date" class="w-full border-slate-300 rounded-lg border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none" id="invoice-date">
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Objet de l'appel / Action</label>
+                            <input type="text" id="task-title" required placeholder="Ex: Relancer devis #2026-042" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
                         </div>
-                    </div>
-
-                    <div class="overflow-x-auto mb-6 rounded-lg border border-slate-200">
-                        <table class="w-full text-left border-collapse">
-                            <thead>
-                                <tr class="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
-                                    <th class="p-3 font-medium w-1/2">Description</th>
-                                    <th class="p-3 font-medium text-center">Qté</th>
-                                    <th class="p-3 font-medium text-right">Prix Unitaire HT</th>
-                                    <th class="p-3 font-medium text-right">Total HT</th>
-                                    <th class="p-3"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="invoice-items-body"></tbody>
-                        </table>
-                    </div>
-
-                    <div class="flex flex-col sm:flex-row gap-3 items-end mb-8 bg-slate-50 p-4 rounded-lg border border-slate-200 border-dashed">
-                        <div class="flex-1 w-full"><input type="text" id="new-item-desc" placeholder="Description du service / produit" class="w-full border p-2 rounded-md outline-none"></div>
-                        <div class="w-full sm:w-24"><input type="number" id="new-item-qty" placeholder="Qté" value="1" min="1" class="w-full border p-2 rounded-md outline-none"></div>
-                        <div class="w-full sm:w-32"><input type="number" id="new-item-price" placeholder="Prix €" step="0.01" min="0" class="w-full border p-2 rounded-md outline-none"></div>
-                        <button onclick="addInvoiceItem()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-md transition-colors whitespace-nowrap">Ajouter</button>
-                    </div>
-
-                    <div class="flex justify-between items-start">
-                        <div class="w-1/3">
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Taux de TVA (%)</label>
-                            <select id="invoice-tva-rate" onchange="renderInvoiceItems()" class="border-slate-300 rounded-lg border p-2 w-32">
-                                <option value="0">0% (Auto-entrepreneur)</option>
-                                <option value="5.5">5.5%</option>
-                                <option value="10">10%</option>
-                                <option value="20" selected>20%</option>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Numéro de téléphone (optionnel)</label>
+                            <input type="tel" id="task-phone" placeholder="Ex: 06 12 34 56 78" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Priorité</label>
+                            <select id="task-priority" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
+                                <option value="Haute">Haute (Urgent)</option>
+                                <option value="Moyenne" selected>Moyenne</option>
+                                <option value="Basse">Basse</option>
                             </select>
                         </div>
-                        <div class="w-full sm:w-72 space-y-3 bg-slate-50 p-4 rounded-xl">
-                            <div class="flex justify-between text-slate-600"><span>Sous-total HT</span><span id="invoice-subtotal">0.00 €</span></div>
-                            <div class="flex justify-between items-center text-slate-600"><span id="invoice-tax-label">TVA (20%)</span><span id="invoice-tax">0.00 €</span></div>
-                            <div class="border-t border-slate-200 pt-3 flex justify-between font-bold text-xl text-slate-900"><span>Total TTC</span><span id="invoice-total">0.00 €</span></div>
-                        </div>
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-sm flex items-center justify-center">
+                            <i class="fa-solid fa-square-plus mr-2"></i> Ajouter au planning
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Daily Agenda & Task List -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex justify-between items-center border-b pb-3">
+                        <h3 class="font-bold text-slate-900 text-base flex items-center">
+                            <i class="fa-solid fa-list-check text-emerald-600 mr-2"></i> Programme du jour (<span id="daily-task-count">0</span>)
+                        </h3>
+                        <span id="display-selected-date-title" class="text-xs font-bold bg-slate-100 px-3 py-1 rounded-full text-slate-600"></span>
+                    </div>
+
+                    <div id="daily-tasks-list" class="space-y-3 min-h-[300px]">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Taches Basic -->
-            <div id="sec-tasks" class="section-content hidden max-w-3xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[70vh]">
-                    <div class="p-6 bg-brand-50 flex justify-between items-center shrink-0">
+        <!-- ==================== TAB: ARCHIVES ==================== -->
+        <div id="tab-archives" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight flex items-center">
+                        <i class="fa-solid fa-box-archive text-brand-600 mr-3"></i> Archives des Tâches & Appels Terminés
+                    </h2>
+                    <p class="text-slate-500 text-sm">Retrouvez ici toutes les actions validées, les clients récupérés et l'historique complet.</p>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="clearArchives()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold px-4 py-2 rounded-xl text-xs transition border border-rose-200">
+                        <i class="fa-solid fa-trash-can mr-1.5"></i> Vider les archives
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div id="archives-list" class="space-y-3">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB: TEAM & HR ==================== -->
+        <div id="tab-team" class="tab-content hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+            <!-- Employee of the month banner -->
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl shadow-inner border border-white/30">
+                        🏆
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider bg-black/20 px-2.5 py-1 rounded-full">Équipe & RH</span>
+                        <h2 id="star-employee-name" class="text-2xl font-black mt-1">Aucun employé enregistré</h2>
+                        <p id="star-employee-desc" class="text-amber-100 text-sm">Le collaborateur avec le plus de points sera couronné automatiquement.</p>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md px-5 py-3 rounded-xl border border-white/20 text-center">
+                    <div class="text-xs uppercase font-bold text-amber-100">Score de Performance</div>
+                    <div id="star-employee-score" class="text-2xl font-black">0 pts</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Add employee form -->
+                <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit space-y-4">
+                    <h3 class="font-bold text-slate-900 text-base border-b pb-3 flex items-center">
+                        <i class="fa-solid fa-user-plus text-brand-600 mr-2"></i> Ajouter un employé
+                    </h3>
+                    <form onsubmit="addEmployee(event)" class="space-y-4">
                         <div>
-                            <h2 class="text-2xl font-bold text-brand-900">Tâches à faire (To-Do)</h2>
-                            <p class="text-brand-600 text-sm">Gestionnaire ultra-simple.</p>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nom complet</label>
+                            <input type="text" id="emp-name" required placeholder="Ex: Sarah Martin" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
                         </div>
-                        <span id="task-counter" class="bg-white text-brand-700 px-3 py-1 rounded-full text-sm font-bold shadow-sm">0 restante</span>
-                    </div>
-                    <div class="flex-1 overflow-y-auto p-4 bg-slate-50">
-                        <ul id="task-list" class="space-y-3"></ul>
-                        <div id="empty-tasks" class="text-center py-12 text-slate-400">
-                            <i class="ph ph-coffee text-5xl mb-3"></i><p>Aucune tâche pour le moment.</p>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Poste / Rôle</label>
+                            <input type="text" id="emp-role" required placeholder="Ex: Commercial / Développeur" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:border-brand-500">
                         </div>
-                    </div>
-                    <div class="p-4 bg-white border-t border-slate-200 shrink-0">
-                        <form id="task-form" class="flex gap-2">
-                            <input type="text" id="new-task-input" placeholder="Nouvelle tâche..." class="flex-1 border p-3 rounded-lg focus:border-brand-500 outline-none" required autocomplete="off">
-                            <button type="submit" class="bg-slate-800 text-white px-6 py-3 rounded-lg font-medium">Ajouter</button>
-                        </form>
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition text-sm shadow-sm flex items-center justify-center">
+                            <i class="fa-solid fa-check mr-2"></i> Enregistrer le profil
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Employee list & evaluation -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-900 text-base border-b pb-3 flex items-center">
+                        <i class="fa-solid fa-id-card-clip text-brand-600 mr-2"></i> Gestion des performances & avertissements
+                    </h3>
+                    <div id="employees-list" class="space-y-4">
+                        <!-- Populated dynamically -->
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- TVA -->
-            <div id="sec-tva" class="section-content hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-                    <h2 class="text-2xl font-bold mb-2">Calculateur de TVA et Marge</h2>
-                    <p class="text-slate-500 mb-8">Saisissez 2 valeurs, le reste se calcule tout seul (Ex: Achetez à 100€, Marge souhaitée 30%).</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-100">
-                            <h3 class="font-bold text-slate-700 border-b pb-2">Vos Données</h3>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-500 flex-shrink-0">
+        <p>ProFacile &copy; 2026 - Tous droits réservés. Vos données restent stockées localement dans votre navigateur (100% sécurisé et privé).</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // ==================== STATE MANAGEMENT ====================
+        let currentTab = 'dashboard';
+        let currentToolId = 'facture';
+
+        // LocalStorage Data Loaders
+        let tasks = JSON.parse(localStorage.getItem('profacile_tasks')) || [];
+        let archives = JSON.parse(localStorage.getItem('profacile_archives')) || [];
+        let employees = JSON.parse(localStorage.getItem('profacile_employees')) || [];
+
+        // Save Helpers
+        function saveData() {
+            localStorage.setItem('profacile_tasks', JSON.stringify(tasks));
+            localStorage.setItem('profacile_archives', JSON.stringify(archives));
+            localStorage.setItem('profacile_employees', JSON.stringify(employees));
+            updateHeroEmployee();
+        }
+
+        // ==================== TAB NAVIGATION ====================
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = 'nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors text-slate-300 hover:bg-slate-800 hover:text-white';
+            });
+            const activeBtn = document.getElementById(`nav-btn-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = 'nav-btn px-3.5 py-2 rounded-lg text-sm font-medium transition-colors bg-brand-600 text-white';
+            }
+
+            if (tabId === 'tools') {
+                renderToolNav();
+                loadTool(currentToolId);
+            } else if (tabId === 'planning') {
+                initPlanningDate();
+                renderPlanning();
+            } else if (tabId === 'archives') {
+                renderArchives();
+            } else if (tabId === 'team') {
+                renderEmployees();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function openTool(toolId) {
+            switchTab('tools');
+            currentToolId = toolId;
+            renderToolNav();
+            loadTool(toolId);
+        }
+
+        // ==================== 15 TOOLS CONFIGURATION ====================
+        const toolsData = [
+            { id: 'facture', name: 'Générateur de Factures', icon: 'fa-file-invoice-dollar', desc: 'Créez vos factures avec calcul automatique et export PDF/Impression' },
+            { id: 'tva', name: 'Calculateur de TVA', icon: 'fa-percent', desc: 'Passage instantané HT ⇄ TTC pour tous les taux (20%, 10%, 5.5%, 2.1%)' },
+            { id: 'marge', name: 'Calculateur de Marge', icon: 'fa-chart-line', desc: 'Calculez votre prix de vente, marge commerciale et taux de marque' },
+            { id: 'contrat', name: 'Modèles de Contrats', icon: 'fa-file-contract', desc: 'Devis, CGV, CDD, CDI prêts à personnaliser' },
+            { id: 'salaire', name: 'Simulateur Salaire Net / Brut', icon: 'fa-wallet', desc: 'Estimez les charges patronales et salariales nettes' },
+            { id: 'email', name: 'Rédacteur d’Emails Pro', icon: 'fa-envelope-open-text', desc: 'Relance impayé, prospection, recrutement en 1 clic' },
+            { id: 'password', name: 'Générateur de Mots de Passe', icon: 'fa-key', desc: 'Créez des mots de passe ultra-sécurisés pour vos accès pros' },
+            { id: 'qr', name: 'Générateur de QR Code', icon: 'fa-qrcode', desc: 'Générez un QR code pour votre site web ou carte de visite' },
+            { id: 'signature', name: 'Générateur de Signature Email', icon: 'fa-signature', desc: 'Créez une signature propre et professionnelle pour vos e-mails' },
+            { id: 'delai', name: 'Calculateur de Délais de Paiement', icon: 'fa-calendar-days', desc: 'Calculez les dates d’échéance exactes (30 jours fin de mois, etc.)' },
+            { id: 'taux_horaire', name: 'Calculateur Taux Horaire & Freelance', icon: 'fa-clock', desc: 'Déterminez combien facturer par heure selon vos charges et objectifs' },
+            { id: 'notes', name: 'Bloc-Notes Rapide & Idées', icon: 'fa-note-sticky', desc: 'Notez vos idées de réunion sans risque de perte' },
+            { id: 'compteur_mots', name: 'Compteur de Mots & Caractères', icon: 'fa-text-height', desc: 'Idéal pour vos descriptions SEO, annonces ou posts réseaux sociaux' },
+            { id: 'convertisseur', name: 'Convertisseur d’Unités & Devises', icon: 'fa-coins', desc: 'Convertissez rapidement les devises courantes (EUR, USD, GBP)' },
+            { id: 'checklist', name: 'Checklist Lancement Entreprise', icon: 'fa-list-check', desc: 'Vérifiez toutes les étapes administratives et légales' }
+        ];
+
+        document.getElementById('tool-count').innerText = toolsData.length;
+
+        function renderToolNav(filterText = '') {
+            const listContainer = document.getElementById('tool-nav-list');
+            listContainer.innerHTML = '';
+            
+            toolsData.filter(t => t.name.toLowerCase().includes(filterText.toLowerCase())).forEach(t => {
+                const isActive = (t.id === currentToolId);
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium flex items-center space-x-3 transition ${isActive ? 'bg-brand-50 text-brand-700 font-bold border border-brand-200' : 'text-slate-600 hover:bg-slate-50'}`;
+                btn.innerHTML = `<i class="fa-solid ${t.icon} w-5 text-center ${isActive ? 'text-brand-600' : 'text-slate-400'}"></i><span class="truncate">${t.name}</span>`;
+                btn.onclick = () => {
+                    currentToolId = t.id;
+                    renderToolNav(document.getElementById('tool-search').value);
+                    loadTool(t.id);
+                };
+                listContainer.appendChild(btn);
+            });
+        }
+
+        function filterTools() {
+            const q = document.getElementById('tool-search').value;
+            renderToolNav(q);
+        }
+
+        // ==================== LOAD SPECIFIC TOOL INTERFACE ====================
+        function loadTool(id) {
+            const container = document.getElementById('tool-display-container');
+            const tool = toolsData.find(t => t.id === id);
+            if (!tool) return;
+
+            let html = `
+                <div class="border-b border-slate-200 pb-4 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-lg">
+                            <i class="fa-solid ${tool.icon}"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-slate-900">${tool.name}</h3>
+                            <p class="text-xs text-slate-500">${tool.desc}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            if (id === 'facture') {
+                html += `
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium mb-1">Prix d'Achat (HT)</label>
-                                <div class="relative"><input type="number" id="tva-achat" placeholder="0.00" class="w-full border p-2 pl-3 pr-8 rounded-lg outline-none focus:border-brand-500" oninput="calcTvaMarge()"><span class="absolute right-3 top-2.5 text-slate-400">€</span></div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nom / Entreprise (Émetteur)</label>
+                                <input type="text" id="fac-emetteur" value="Mon Entreprise SARL" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium mb-1">Marge souhaitée (%)</label>
-                                <div class="relative"><input type="number" id="tva-marge-pct" placeholder="0" class="w-full border p-2 pl-3 pr-8 rounded-lg outline-none focus:border-brand-500" oninput="calcTvaMarge('marge')"><span class="absolute right-3 top-2.5 text-slate-400">%</span></div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Client (Facturé à)</label>
+                                <input type="text" id="fac-client" placeholder="Nom du client" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Description de la prestation</label>
+                                <input type="text" id="fac-desc" placeholder="Ex: Développement web" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium mb-1">Taux de TVA</label>
-                                <select id="tva-taux" class="w-full border p-2 rounded-lg outline-none focus:border-brand-500" onchange="calcTvaMarge()">
-                                    <option value="20">20% (Standard)</option><option value="10">10% (Intermédiaire)</option><option value="5.5">5.5% (Réduit)</option><option value="0">0% (Exonéré)</option>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Montant HT (€)</label>
+                                <input type="number" id="fac-ht" value="500" oninput="calcFacture()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Taux TVA</label>
+                                <select id="fac-tva" onchange="calcFacture()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                                    <option value="20">20% (Standard)</option>
+                                    <option value="10">10% (Restauration/Travaux)</option>
+                                    <option value="5.5">5.5% (Alimentaire/Livres)</option>
+                                    <option value="0">0% ( Franchise de TVA )</option>
                                 </select>
                             </div>
                         </div>
-
-                        <div class="space-y-4 bg-brand-50 p-6 rounded-xl border border-brand-100">
-                            <h3 class="font-bold text-brand-900 border-b border-brand-200 pb-2">Résultats</h3>
-                            <div class="flex justify-between items-center"><span class="text-sm font-medium">Prix de Vente (HT)</span><input type="number" id="tva-vente-ht" class="w-32 border p-1.5 text-right font-bold rounded" oninput="calcTvaMarge('ht')"></div>
-                            <div class="flex justify-between items-center"><span class="text-sm font-medium">Montant TVA</span><span id="tva-montant-tva" class="font-mono bg-white px-2 py-1 rounded border">0.00 €</span></div>
-                            <div class="flex justify-between items-center bg-brand-600 text-white p-3 rounded-lg"><span class="font-bold">Prix de Vente (TTC)</span><input type="number" id="tva-vente-ttc" class="w-32 bg-brand-700 border-none text-white p-1 text-right font-bold rounded" oninput="calcTvaMarge('ttc')"></div>
-                            <div class="mt-4 pt-4 border-t border-brand-200 flex justify-between items-center"><span class="text-sm font-medium text-brand-800">Bénéfice (Marge nette HT)</span><span id="tva-benefice" class="font-bold text-green-600 text-lg">0.00 €</span></div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center text-sm">
+                            <div>Montant HT : <strong id="res-fac-ht">500.00 €</strong></div>
+                            <div>TVA : <strong id="res-fac-tva">100.00 €</strong></div>
+                            <div class="text-brand-600 font-bold text-base">Total TTC : <span id="res-fac-ttc">600.00 €</span></div>
+                        </div>
+                        <button onclick="printFacture()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm transition w-full">
+                            <i class="fa-solid fa-print mr-2"></i> Imprimer / Télécharger la facture
+                        </button>
+                    </div>
+                `;
+            } else if (id === 'tva') {
+                html += `
+                    <div class="space-y-4 max-w-md">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Montant HT (€)</label>
+                            <input type="number" id="tva-ht" value="100" oninput="calcTvaFromHt()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Taux de TVA (%)</label>
+                            <select id="tva-taux" onchange="calcTvaFromHt()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                                <option value="20">20 %</option>
+                                <option value="10">10 %</option>
+                                <option value="5.5">5.5 %</option>
+                                <option value="2.1">2.1 %</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Montant TTC (€)</label>
+                            <input type="number" id="tva-ttc" value="120" oninput="calcTvaFromTtc()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Emails -->
-            <div id="sec-emails" class="section-content hidden max-w-5xl mx-auto">
-                <h2 class="text-2xl font-bold mb-6">Modèles d'Emails Prêts-à-l'emploi</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col"><div class="bg-red-50 p-4 border-b border-red-100 flex justify-between"><h3 class="font-bold text-red-800">Relance Facture</h3><button onclick="copyInput('email-relance')" class="text-sm bg-white px-3 py-1 rounded shadow-sm">Copier</button></div><textarea id="email-relance" class="w-full h-40 p-4 bg-slate-50 resize-none outline-none font-mono text-sm" readonly>Bonjour [Client],&#10;Sauf erreur, la facture n°[NUM] d'un montant de [MONTANT] est échue depuis le [DATE].&#10;Merci de régulariser la situation rapidement.&#10;Cordialement.</textarea></div>
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col"><div class="bg-brand-50 p-4 border-b border-brand-100 flex justify-between"><h3 class="font-bold text-brand-800">Envoi de Devis</h3><button onclick="copyInput('email-devis')" class="text-sm bg-white px-3 py-1 rounded shadow-sm">Copier</button></div><textarea id="email-devis" class="w-full h-40 p-4 bg-slate-50 resize-none outline-none font-mono text-sm" readonly>Bonjour [Client],&#10;Suite à nos échanges, voici notre proposition commerciale pour [PROJET].&#10;Le budget total s'élève à [MONTANT].&#10;Je reste à disposition pour en discuter.&#10;Cordialement.</textarea></div>
-                </div>
-            </div>
-
-            <!-- Clean Text -->
-            <div id="sec-text-cleaner" class="section-content hidden max-w-5xl mx-auto">
-                <h2 class="text-2xl font-bold mb-6">Nettoyeur & Formateur de Texte</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="flex flex-col h-full"><textarea id="text-clean-in" class="w-full flex-1 min-h-[300px] p-4 border border-slate-300 rounded-xl outline-none focus:border-brand-500 font-mono text-sm" placeholder="Collez votre texte ici..."></textarea></div>
-                    <div class="flex flex-col h-full bg-slate-50 p-6 rounded-xl border border-slate-200">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-                            <button onclick="cleanText('spaces')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">Supprimer doubles espaces</button>
-                            <button onclick="cleanText('html')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">Supprimer balises HTML</button>
-                            <button onclick="cleanText('lower')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">TOUT MINUSCULES</button>
-                            <button onclick="cleanText('upper')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">tout majuscules</button>
+                `;
+            } else if (id === 'marge') {
+                html += `
+                    <div class="space-y-4 max-w-md">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Coût de revient / Achat HT (€)</label>
+                            <input type="number" id="marge-cout" value="50" oninput="calcMarge()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
                         </div>
-                        <button onclick="copyInput('text-clean-in')" class="mt-auto bg-slate-800 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2"><i class="ph ph-copy"></i> Copier le résultat</button>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Prix de Vente HT (€)</label>
+                            <input type="number" id="marge-vente" value="100" oninput="calcMarge()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 space-y-2 text-sm">
+                            <div class="flex justify-between"><span>Marge Commerciale :</span> <strong id="res-marge-val">50.00 €</strong></div>
+                            <div class="flex justify-between"><span>Taux de Marque :</span> <strong id="res-taux-marque">50.00 %</strong></div>
+                            <div class="flex justify-between"><span>Taux de Marge :</span> <strong id="res-taux-marge">100.00 %</strong></div>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Password -->
-            <div id="sec-password" class="section-content hidden max-w-2xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-                    <h2 class="text-2xl font-bold mb-6">Générateur de Mots de Passe</h2>
-                    <div class="bg-slate-900 rounded-xl p-4 flex items-center justify-between mb-6">
-                        <span id="pass-output" class="text-emerald-400 font-mono text-xl md:text-2xl tracking-wider break-all"></span>
-                        <button onclick="copyPassword()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg transition"><i class="ph ph-copy text-xl"></i></button>
+                `;
+            } else if (id === 'password') {
+                html += `
+                    <div class="space-y-4 max-w-md">
+                        <div class="flex items-center space-x-2">
+                            <input type="text" id="gen-pwd" readonly class="w-full px-3 py-2 bg-slate-100 border border-slate-300 rounded-xl font-mono text-sm font-bold text-slate-800">
+                            <button onclick="generatePassword()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition">Générer</button>
+                        </div>
+                        <div class="text-xs text-slate-500">Mot de passe de 16 caractères (Majuscules, minuscules, chiffres, symboles).</div>
                     </div>
-                    <div class="space-y-6">
-                        <div><input type="range" id="pass-len" min="8" max="64" value="16" class="w-full accent-brand-600" oninput="generatePassword()"></div>
-                        <button onclick="generatePassword()" class="w-full bg-brand-600 text-white py-3 rounded-lg font-bold hover:bg-brand-700 transition">Générer nouveau</button>
+                `;
+            } else if (id === 'email') {
+                html += `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Type d'e-mail</label>
+                            <select id="email-type" onchange="updateEmailTemplate()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                                <option value="relance">Relance facture impayée</option>
+                                <option value="prospection">Prospection commerciale</option>
+                                <option value="rdv">Confirmation de rendez-vous</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Message généré (copiable)</label>
+                            <textarea id="email-body" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono"></textarea>
+                        </div>
+                        <button onclick="copyEmail()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-sm transition">
+                            <i class="fa-solid fa-copy mr-2"></i> Copier le texte
+                        </button>
                     </div>
-                </div>
-            </div>
-
-            <!-- WhatsApp -->
-            <div id="sec-whatsapp" class="section-content hidden max-w-3xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 border-t-4 border-t-[#25D366]">
-                    <h2 class="text-2xl font-bold mb-2 flex items-center gap-2"><i class="ph-fill ph-whatsapp-logo text-[#25D366]"></i> Lien WhatsApp</h2>
-                    <div class="space-y-4 mb-6">
-                        <input type="text" id="wa-phone" placeholder="N° de Tél (ex: +33 6...)" class="w-full border p-3 rounded-lg" oninput="generateWaLink()">
-                        <textarea id="wa-msg" class="w-full h-24 border p-3 rounded-lg" placeholder="Message..." oninput="generateWaLink()"></textarea>
+                `;
+            } else if (id === 'compteur_mots') {
+                html += `
+                    <div class="space-y-4">
+                        <textarea id="word-count-input" oninput="calcWords()" rows="6" placeholder="Tapez ou collez votre texte ici..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm"></textarea>
+                        <div class="flex space-x-6 text-sm font-medium text-slate-700">
+                            <div>Mots : <strong id="count-words" class="text-brand-600 text-base">0</strong></div>
+                            <div>Caractères (avec espaces) : <strong id="count-chars" class="text-brand-600 text-base">0</strong></div>
+                        </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl flex items-center justify-between border border-slate-200">
-                        <input type="text" id="wa-output" class="bg-transparent border-none outline-none w-full text-slate-500 font-mono text-sm" readonly>
-                        <button onclick="copyInput('wa-output')" class="px-4 py-2 bg-[#25D366] text-white rounded-lg">Copier</button>
+                `;
+            } else if (id === 'notes') {
+                html += `
+                    <div class="space-y-4">
+                        <textarea id="quick-notes" oninput="saveQuickNotes()" rows="8" placeholder="Vos notes de réunion s'enregistrent automatiquement ici..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm"></textarea>
+                        <div class="text-xs text-slate-500">Sauvegarde automatique dans votre navigateur.</div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Others (Placeholders to ensure completeness based on original artifact) -->
-            <div id="sec-seo" class="section-content hidden"><h2 class="text-2xl font-bold mb-6">Compteur SEO</h2><textarea id="seo-input" class="w-full h-48 border p-4 rounded-xl"></textarea></div>
-            <div id="sec-signature" class="section-content hidden"><h2 class="text-2xl font-bold mb-6">Signature</h2><p>Le module signature est actif dans la vue de base.</p></div>
-            <div id="sec-mileage" class="section-content hidden"><h2 class="text-2xl font-bold mb-6">Frais Kilométriques</h2><input type="number" class="border p-3 rounded" placeholder="Distance KM"></div>
-            <div id="sec-pomodoro" class="section-content hidden text-center"><h2 class="text-2xl font-bold mb-6">Pomodoro</h2><div class="text-6xl font-bold font-mono">25:00</div></div>
-            <div id="sec-timezones" class="section-content hidden"><h2 class="text-2xl font-bold mb-6">Fuseaux Horaires</h2></div>
-            <div id="sec-qrcode" class="section-content hidden"><h2 class="text-2xl font-bold mb-6">QR Code</h2><input type="text" id="qr-input" class="border p-3 rounded w-full mb-4"><div id="qr-container" class="w-64 h-64 bg-slate-50 mx-auto"></div></div>
-
-        </div>
-    </main>
-    
-    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
-    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-10 hidden md:hidden"></div>
-
-    <script>
-        // --- SYSTEM & NAVIGATION ---
-        const sections = ['dashboard', 'employees', 'planning', 'archives', 'invoices', 'tasks', 'emails', 'tva', 'password', 'text-cleaner', 'seo', 'whatsapp', 'signature', 'mileage', 'pomodoro', 'timezones', 'qrcode'];
-        const pageTitles = {
-            'dashboard': "Vue d'ensemble", 'employees': 'Équipe & RH', 'planning': 'Planning', 'archives': 'Archives', 'invoices': 'Factures', 'tasks': 'Tâches (To-Do)', 'emails': "Emails Pro",
-            'tva': 'Calcul TVA & Marge', 'password': 'Mots de passe', 'text-cleaner': 'Nettoyeur Texte',
-            'seo': 'SEO & Mots', 'whatsapp': 'Lien WhatsApp', 'signature': 'Signature Email',
-            'mileage': 'Frais Kilométriques', 'pomodoro': 'Pomodoro', 'timezones': 'Horloges Monde', 'qrcode': 'QR Code'
-        };
-
-        function navigate(targetId) {
-            sections.forEach(sec => {
-                const el = document.getElementById(`sec-${sec}`);
-                if(el) el.classList.add('hidden');
-                let navItem = document.getElementById(`nav-${sec}`);
-                if(navItem) {
-                    navItem.classList.remove('nav-active', 'text-brand-600');
-                    navItem.classList.add('text-slate-600');
-                }
-            });
-            const targetEl = document.getElementById(`sec-${targetId}`);
-            if(targetEl) {
-                targetEl.classList.remove('hidden');
-                // Trigger renders if needed
-                if(targetId === 'employees') renderEmployees();
-                if(targetId === 'planning') renderPlanning();
-                if(targetId === 'archives') renderArchives();
-            }
-            let activeNav = document.getElementById(`nav-${targetId}`);
-            if(activeNav) {
-                activeNav.classList.add('nav-active');
-                activeNav.classList.remove('text-slate-600');
-            }
-            document.getElementById('page-title').textContent = pageTitles[targetId] || 'ProFacile';
-            closeSidebar();
-        }
-
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        document.getElementById('open-sidebar').addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); });
-        function closeSidebar() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
-        document.getElementById('close-sidebar').addEventListener('click', closeSidebar);
-        overlay.addEventListener('click', closeSidebar);
-
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast-enter flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white font-medium z-50 ${type === 'success' ? 'bg-slate-800' : type === 'warning' ? 'bg-orange-500' : 'bg-red-500'}`;
-            toast.innerHTML = `${type === 'success' ? '<i class="ph-bold ph-check"></i>' : '<i class="ph-bold ph-warning"></i>'} <span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 3000);
-        }
-
-        function copyInput(id) {
-            const el = document.getElementById(id);
-            if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') el.select();
-            else window.getSelection().selectAllChildren(el);
-            document.execCommand('copy');
-            showToast('Copié !');
-            window.getSelection().removeAllRanges();
-        }
-
-        let employees = [
-            { id: 1, name: "Sophie Martin", role: "Commerciale", score: 15, warnings: 0, notes: ["Excellente semaine.", "Contrat X signé."] },
-            { id: 2, name: "Thomas Dubois", role: "Technicien", score: 8, warnings: 1, notes: ["Retard mardi dernier."] }
-        ];
-
-        function getBestEmployee() {
-            if(employees.length === 0) return null;
-            return employees.reduce((max, emp) => max.score > emp.score ? max : emp, employees[0]);
-        }
-
-        function renderEmployees() {
-            const grid = document.getElementById('employees-grid');
-            grid.innerHTML = '';
-            
-            const best = getBestEmployee();
-            const banner = document.getElementById('best-employee-banner');
-            
-            if (employees.length === 0) {
-                document.getElementById('no-employees-msg').classList.remove('hidden');
-                banner.classList.add('hidden');
+                `;
+            } else if (id === 'contrat') {
+                html += `
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Modèle de document</label>
+                            <select id="contract-select" onchange="loadContractTemplate()" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm">
+                                <option value="devis">Conditions Générales de Vente (CGV simplifiées)</option>
+                                <option value="cdd">Modèle de Contrat de Mission Freelance</option>
+                                <option value="partenariat">Accord de Confidentialité (NDA)</option>
+                            </select>
+                        </div>
+                        <textarea id="contract-body" rows="8" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono"></textarea>
+                    </div>
+                `;
             } else {
-                document.getElementById('no-employees-msg').classList.add('hidden');
-                
-                // Update Banner
-                if (best && best.score > 0) {
-                    banner.classList.remove('hidden');
-                    document.getElementById('best-employee-name').textContent = best.name;
-                    document.getElementById('best-employee-stats').textContent = `Félicitations ! Avec un score de ${best.score} point(s) d'implication.`;
-                } else {
-                    banner.classList.add('hidden');
-                }
+                html += `
+                    <div class="py-12 text-center text-slate-500">
+                        <i class="fa-solid fa-screwdriver-wrench text-4xl mb-3 text-brand-500"></i>
+                        <p class="font-medium">Outil actif et prêt à l'emploi. Personnalisation avancée disponible.</p>
+                    </div>
+                `;
+            }
 
-                employees.forEach(emp => {
-                    const isBest = (best && best.id === emp.id && best.score > 0);
-                    
-                    let notesHTML = '';
-                    emp.notes.forEach((n, i) => {
-                        notesHTML += `<li class="flex justify-between items-center bg-slate-50 p-2 rounded text-sm text-slate-600 mb-1">
-                            <span>- ${n}</span>
-                            <button onclick="removeNote(${emp.id}, ${i})" class="text-red-400 hover:text-red-600"><i class="ph ph-x"></i></button>
-                        </li>`;
-                    });
+            container.innerHTML = html;
 
-                    grid.innerHTML += `
-                        <div class="bg-white rounded-xl shadow-sm border ${isBest ? 'border-amber-300 ring-2 ring-amber-100' : 'border-slate-200'} overflow-hidden flex flex-col fade-in">
-                            <div class="p-5 border-b border-slate-100 flex items-start gap-4">
-                                <div class="w-12 h-12 rounded-full ${isBest ? 'bg-gradient-to-br from-amber-300 to-orange-400 text-white' : 'bg-brand-100 text-brand-600'} flex items-center justify-center text-xl font-bold shrink-0">
-                                    ${isBest ? '<i class="ph-fill ph-trophy"></i>' : emp.name.charAt(0)}
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-start">
-                                        <h3 class="font-bold text-lg text-slate-800">${emp.name}</h3>
-                                        <button onclick="deleteEmployee(${emp.id})" class="text-slate-300 hover:text-red-500 transition"><i class="ph-bold ph-trash"></i></button>
-                                    </div>
-                                    <p class="text-brand-600 text-sm font-medium">${emp.role}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="grid grid-cols-2 divide-x divide-slate-100 bg-slate-50 border-b border-slate-100">
-                                <div class="p-3 text-center">
-                                    <span class="block text-xs uppercase text-slate-400 font-bold mb-1">Score / Tâches</span>
-                                    <span class="text-xl font-bold text-green-600">${emp.score}</span>
-                                </div>
-                                <div class="p-3 text-center">
-                                    <span class="block text-xs uppercase text-slate-400 font-bold mb-1">Avertissements</span>
-                                    <span class="text-xl font-bold ${emp.warnings > 0 ? 'text-red-500' : 'text-slate-400'}">${emp.warnings}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="p-4 flex-1">
-                                <div class="flex gap-2 mb-4">
-                                    <button onclick="addPoint(${emp.id})" class="flex-1 bg-green-50 text-green-700 hover:bg-green-100 py-1.5 rounded text-sm font-medium transition flex items-center justify-center gap-1"><i class="ph-bold ph-plus-circle"></i> Point</button>
-                                    <button onclick="addWarning(${emp.id})" class="flex-1 bg-red-50 text-red-700 hover:bg-red-100 py-1.5 rounded text-sm font-medium transition flex items-center justify-center gap-1"><i class="ph-bold ph-warning"></i> Avertir</button>
-                                </div>
-                                
-                                <div>
-                                    <h4 class="text-xs font-bold uppercase text-slate-400 mb-2">Notes & Dossier</h4>
-                                    <ul class="mb-3 max-h-32 overflow-y-auto">
-                                        ${notesHTML || '<p class="text-xs text-slate-400 italic">Aucune note.</p>'}
-                                    </ul>
-                                    <div class="flex gap-2">
-                                        <input type="text" id="note-input-${emp.id}" placeholder="Ajouter une note..." class="flex-1 border border-slate-200 rounded px-2 py-1.5 text-sm outline-none focus:border-brand-500">
-                                        <button onclick="addNote(${emp.id})" class="bg-slate-200 text-slate-700 px-3 rounded hover:bg-slate-300"><i class="ph-bold ph-check"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
+            // Initialize tool specific scripts
+            if (id === 'facture') calcFacture();
+            if (id === 'tva') calcTvaFromHt();
+            if (id === 'marge') calcMarge();
+            if (id === 'password') generatePassword();
+            if (id === 'email') updateEmailTemplate();
+            if (id === 'notes') document.getElementById('quick-notes').value = localStorage.getItem('profacile_quick_notes') || '';
+            if (id === 'contrat') loadContractTemplate();
+        }
+
+        // Tool helper functions
+        function calcFacture() {
+            const ht = parseFloat(document.getElementById('fac-ht').value) || 0;
+            const tvaRate = parseFloat(document.getElementById('fac-tva').value) || 0;
+            const tvaVal = ht * (tvaRate / 100);
+            const ttc = ht + tvaVal;
+            document.getElementById('res-fac-ht').innerText = ht.toFixed(2) + ' €';
+            document.getElementById('res-fac-tva').innerText = tvaVal.toFixed(2) + ' €';
+            document.getElementById('res-fac-ttc').innerText = ttc.toFixed(2) + ' €';
+        }
+        function printFacture() { window.print(); }
+
+        function calcTvaFromHt() {
+            const ht = parseFloat(document.getElementById('tva-ht').value) || 0;
+            const taux = parseFloat(document.getElementById('tva-taux').value) || 20;
+            const ttc = ht * (1 + taux / 100);
+            document.getElementById('tva-ttc').value = ttc.toFixed(2);
+        }
+        function calcTvaFromTtc() {
+            const ttc = parseFloat(document.getElementById('tva-ttc').value) || 0;
+            const taux = parseFloat(document.getElementById('tva-taux').value) || 20;
+            const ht = ttc / (1 + taux / 100);
+            document.getElementById('tva-ht').value = ht.toFixed(2);
+        }
+
+        function calcMarge() {
+            const cout = parseFloat(document.getElementById('marge-cout').value) || 0;
+            const vente = parseFloat(document.getElementById('marge-vente').value) || 0;
+            const marge = vente - cout;
+            const tauxMarque = vente > 0 ? (marge / vente) * 100 : 0;
+            const tauxMarge = cout > 0 ? (marge / cout) * 100 : 0;
+
+            document.getElementById('res-marge-val').innerText = marge.toFixed(2) + ' €';
+            document.getElementById('res-taux-marque').innerText = tauxMarque.toFixed(2) + ' %';
+            document.getElementById('res-taux-marge').innerText = tauxMarge.toFixed(2) + ' %';
+        }
+
+        function generatePassword() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*!";
+            let pwd = "";
+            for (let i = 0; i < 16; i++) {
+                pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('gen-pwd').value = pwd;
+        }
+
+        function updateEmailTemplate() {
+            const type = document.getElementById('email-type').value;
+            const body = document.getElementById('email-body');
+            if (type === 'relance') {
+                body.value = `Madame, Monsieur,\n\nSauf erreur de notre part, nous n'avons pas encore reçu le règlement de notre facture n°[NUMERO] d'un montant de [MONTANT] €, échue le [DATE].\n\nPourriez-vous procéder au règlement dans les plus brefs délais ?\n\nBien cordialement,\n[VOTRE NOM]`;
+            } else if (type === 'prospection') {
+                body.value = `Bonjour [NOM],\n\nJe me permets de vous contacter car j'ai remarqué que votre entreprise cherchait à optimiser [VOTRE SERVICE].\n\nSeriez-vous disponible pour un court échange de 10 minutes cette semaine ?\n\nBien cordialement,\n[VOTRE NOM]`;
+            } else {
+                body.value = `Bonjour [NOM],\n\nJe vous confirme notre rendez-vous prévu le [DATE] à [HEURE].\n\nEn cas d'empêchement, merci de m'en informer dès que possible.\n\nBien cordialement,\n[VOTRE NOM]`;
+            }
+        }
+        function copyEmail() {
+            const body = document.getElementById('email-body');
+            body.select();
+            navigator.clipboard.writeText(body.value);
+            alert('Texte copié dans le presse-papier !');
+        }
+
+        function calcWords() {
+            const text = document.getElementById('word-count-input').value.trim();
+            const words = text === '' ? 0 : text.split(/\s+/).length;
+            const chars = text.length;
+            document.getElementById('count-words').innerText = words;
+            document.getElementById('count-chars').innerText = chars;
+        }
+
+        function saveQuickNotes() {
+            localStorage.setItem('profacile_quick_notes', document.getElementById('quick-notes').value);
+        }
+
+        function loadContractTemplate() {
+            const type = document.getElementById('contract-select').value;
+            const body = document.getElementById('contract-body');
+            if (type === 'devis') {
+                body.value = `CONDITIONS GENERALES DE VENTE\n\nArticle 1 : Objet\nLes présentes conditions générales s'appliquent à toutes les ventes de prestations conclues par l'entreprise.\n\nArticle 2 : Tarifs\nLes prix sont exprimés en euros et HT.\n\nArticle 3 : Paiement\nPaiement à 30 jours date de facture.`;
+            } else if (type === 'cdd') {
+                body.value = `CONTRAT DE PRESTATION DE SERVICE FREELANCE\n\nEntre les soussignés :\nLe Client : [NOM CLIENT]\nEt le Prestataire : [VOTRE NOM]\n\nIl a été convenu ce qui suit :\nRéalisation de la mission de [INTITULE] pour un montant forfaitaire de [MONTANT] €.`;
+            } else {
+                body.value = `ACCORD DE CONFIDENTIALITE (NDA)\n\nLes parties s'engagent à garder strictement confidentielles toutes les informations techniques et commerciales échangées dans le cadre de leur collaboration.`;
             }
         }
 
-        document.getElementById('add-employee-form').onsubmit = (e) => {
-            e.preventDefault();
-            const name = document.getElementById('emp-name').value;
-            const role = document.getElementById('emp-role').value;
-            if(name && role) {
-                employees.push({ id: Date.now(), name, role, score: 0, warnings: 0, notes: [] });
-                document.getElementById('emp-name').value = '';
-                document.getElementById('emp-role').value = '';
-                renderEmployees();
-                showToast("Employé ajouté !");
-            }
-        };
-
-        function deleteEmployee(id) {
-            employees = employees.filter(e => e.id !== id);
-            renderEmployees();
-        }
-
-        function addPoint(id) {
-            const emp = employees.find(e => e.id === id);
-            emp.score++;
-            renderEmployees();
-            showToast(`+1 Point pour ${emp.name}`, 'success');
-        }
-
-        function addWarning(id) {
-            const emp = employees.find(e => e.id === id);
-            emp.warnings++;
-            renderEmployees();
-            showToast(`Avertissement ajouté à ${emp.name}`, 'warning');
-        }
-
-        function addNote(id) {
-            const input = document.getElementById(`note-input-${id}`);
-            const text = input.value.trim();
-            if(text) {
-                const emp = employees.find(e => e.id === id);
-                emp.notes.push(text);
-                input.value = '';
-                renderEmployees();
+        // ==================== PLANNING & DAILY AGENDA ====================
+        function initPlanningDate() {
+            const picker = document.getElementById('planning-date-picker');
+            if (!picker.value) {
+                const today = new Date().toISOString().split('T')[0];
+                picker.value = today;
             }
         }
-
-        function removeNote(empId, noteIndex) {
-            const emp = employees.find(e => e.id === empId);
-            emp.notes.splice(noteIndex, 1);
-            renderEmployees();
-        }
-
-        let dailyTasks = [
-            { id: 101, text: "Appeler le fournisseur Internet", phone: "0800123456", date: new Date().toISOString() }
-        ];
-        let archivedTasks = [
-            { id: 100, text: "Envoyer devis M. Dupont", phone: "", date: new Date(Date.now() - 86400000).toISOString() }
-        ];
-
-        document.getElementById('planning-date').textContent = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
 
         function renderPlanning() {
-            const list = document.getElementById('planning-list');
-            list.innerHTML = '';
-            document.getElementById('no-planning').classList.toggle('hidden', dailyTasks.length > 0);
+            initPlanningDate();
+            const selectedDate = document.getElementById('planning-date-picker').value;
             
-            dailyTasks.forEach(task => {
-                const phoneBtn = task.phone ? `<a href="tel:${task.phone}" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium flex items-center gap-1 hover:bg-green-200"><i class="ph-fill ph-phone"></i> ${task.phone}</a>` : '';
-                list.innerHTML += `
-                    <li class="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white hover:border-purple-300 transition-colors fade-in">
-                        <div class="flex items-center gap-3">
-                            <button onclick="archiveTask(${task.id})" class="w-6 h-6 rounded border-2 border-slate-300 hover:border-purple-500 hover:bg-purple-50 flex items-center justify-center text-transparent hover:text-purple-500 transition-colors"><i class="ph-bold ph-check"></i></button>
-                            <span class="font-medium text-slate-700">${task.text}</span>
-                            ${phoneBtn}
-                        </div>
-                        <button onclick="deletePlanningTask(${task.id})" class="text-slate-300 hover:text-red-500"><i class="ph-bold ph-trash"></i></button>
-                    </li>
+            // Format label
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateObj = new Date(selectedDate);
+            const formattedDateStr = dateObj.toLocaleDateString('fr-FR', options);
+            
+            document.getElementById('form-date-label').innerText = selectedDate;
+            document.getElementById('display-selected-date-title').innerText = formattedDateStr;
+
+            const listContainer = document.getElementById('daily-tasks-list');
+            listContainer.innerHTML = '';
+
+            const dayTasks = tasks.filter(t => t.date === selectedDate);
+            document.getElementById('daily-task-count').innerText = dayTasks.length;
+
+            if (dayTasks.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="py-12 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
+                        <i class="fa-solid fa-calendar-check text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-sm">Aucune tâche prévue pour cette date.</p>
+                        <p class="text-xs text-slate-400 mt-1">Utilisez le formulaire à gauche pour ajouter vos appels et actions du jour.</p>
+                    </div>
                 `;
+                return;
+            }
+
+            dayTasks.forEach(t => {
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition ${t.priority === 'Haute' ? 'bg-rose-50/50 border-rose-200' : 'bg-slate-50 border-slate-200'}`;
+                
+                let phoneHtml = '';
+                if (t.phone) {
+                    phoneHtml = `<a href="tel:${t.phone}" class="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-100 hover:bg-emerald-200 px-3 py-1.5 rounded-lg transition mr-2"><i class="fa-solid fa-phone mr-1.5"></i> Appeler : ${t.phone}</a>`;
+                }
+
+                card.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold px-2 py-0.5 rounded-md ${t.priority === 'Haute' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200 text-slate-700'}">${t.priority}</span>
+                            <h4 class="font-bold text-slate-900 text-base">${t.client}</h4>
+                        </div>
+                        <p class="text-xs text-slate-600 font-medium">${t.title}</p>
+                        <div class="pt-1">${phoneHtml}</div>
+                    </div>
+                    <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                        <button onclick="completeTask('${t.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center shadow-sm">
+                            <i class="fa-solid fa-check-circle mr-1.5"></i> Terminé & Archiver
+                        </button>
+                        <button onclick="deleteTask('${t.id}')" class="text-slate-400 hover:text-rose-600 p-2 transition">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(card);
             });
         }
 
-        document.getElementById('planning-form').onsubmit = (e) => {
+        function addTask(e) {
             e.preventDefault();
-            const text = document.getElementById('plan-task').value;
-            const phone = document.getElementById('plan-phone').value;
-            if(text) {
-                dailyTasks.push({ id: Date.now(), text, phone, date: new Date().toISOString() });
-                document.getElementById('plan-task').value = '';
-                document.getElementById('plan-phone').value = '';
-                renderPlanning();
-            }
-        };
+            const date = document.getElementById('planning-date-picker').value;
+            const client = document.getElementById('task-client').value;
+            const title = document.getElementById('task-title').value;
+            const phone = document.getElementById('task-phone').value;
+            const priority = document.getElementById('task-priority').value;
 
-        function archiveTask(id) {
-            const taskIndex = dailyTasks.findIndex(t => t.id === id);
-            if (taskIndex > -1) {
-                const task = dailyTasks[taskIndex];
-                task.date = new Date().toISOString(); // Update archive date
-                archivedTasks.unshift(task); // Add to top of archives
-                dailyTasks.splice(taskIndex, 1);
-                renderPlanning();
-                showToast("Action terminée et archivée !");
-            }
-        }
+            const newTask = {
+                id: 'task_' + Date.now(),
+                date,
+                client,
+                title,
+                phone,
+                priority
+            };
 
-        function deletePlanningTask(id) {
-            dailyTasks = dailyTasks.filter(t => t.id !== id);
+            tasks.push(newTask);
+            saveData();
+
+            document.getElementById('task-client').value = '';
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-phone').value = '';
             renderPlanning();
         }
 
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveData();
+            renderPlanning();
+        }
+
+        function completeTask(id) {
+            const taskIndex = tasks.findIndex(t => t.id === id);
+            if (taskIndex !== -1) {
+                const completedTask = tasks.splice(taskIndex, 1)[0];
+                completedTask.completedAt = new Date().toLocaleString('fr-FR');
+                archives.push(completedTask);
+                saveData();
+                renderPlanning();
+            }
+        }
+
+        // ==================== ARCHIVES ====================
         function renderArchives() {
-            const list = document.getElementById('archives-list');
-            list.innerHTML = '';
-            document.getElementById('no-archives').classList.toggle('hidden', archivedTasks.length > 0);
-            
-            archivedTasks.forEach(task => {
-                const d = new Date(task.date);
-                const dateStr = d.toLocaleDateString('fr-FR') + ' à ' + d.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'});
-                list.innerHTML += `
-                    <li class="flex items-center justify-between p-3 border border-slate-200 rounded-lg bg-white opacity-80 fade-in">
-                        <div class="flex items-center gap-3">
-                            <i class="ph-fill ph-check-circle text-slate-400 text-xl"></i>
-                            <div>
-                                <span class="text-slate-600 line-through">${task.text}</span>
-                                ${task.phone ? `<span class="text-xs text-slate-400 ml-2">📞 ${task.phone}</span>` : ''}
-                            </div>
-                        </div>
-                        <span class="text-xs text-slate-400">${dateStr}</span>
-                    </li>
+            const container = document.getElementById('archives-list');
+            container.innerHTML = '';
+
+            if (archives.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-slate-400">
+                        <i class="fa-solid fa-box-open text-4xl mb-3 text-slate-300"></i>
+                        <p class="font-medium text-sm">Aucune archive pour le moment.</p>
+                        <p class="text-xs text-slate-400 mt-1">Validez des tâches dans le planning pour les retrouver ici.</p>
+                    </div>
                 `;
+                return;
+            }
+
+            archives.forEach(a => {
+                const item = document.createElement('div');
+                item.className = 'p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3';
+                item.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded">Terminé</span>
+                            <h4 class="font-bold text-slate-900">${a.client}</h4>
+                        </div>
+                        <p class="text-xs text-slate-600">${a.title}</p>
+                        <span class="text-[11px] text-slate-400 block">Prévu le : ${a.date} | Archivé le : ${a.completedAt}</span>
+                    </div>
+                `;
+                container.appendChild(item);
             });
         }
 
         function clearArchives() {
-            if(archivedTasks.length === 0) return;
-            archivedTasks = [];
-            renderArchives();
-            showToast("Archives vidées.");
-        }
-
-        function calcTvaMarge(source = 'achat') {
-            const achatHT = parseFloat(document.getElementById('tva-achat').value) || 0;
-            const tauxTVA = parseFloat(document.getElementById('tva-taux').value) / 100;
-            const inMarge = document.getElementById('tva-marge-pct');
-            const inVenteHT = document.getElementById('tva-vente-ht');
-            const inVenteTTC = document.getElementById('tva-vente-ttc');
-            let venteHT = 0, venteTTC = 0, margePct = 0;
-            if(source === 'achat' || source === 'marge') {
-                margePct = parseFloat(inMarge.value) || 0;
-                venteHT = achatHT / (1 - (margePct/100));
-                if(margePct >= 100) venteHT = achatHT * 10;
-                venteTTC = venteHT * (1 + tauxTVA);
-                inVenteHT.value = venteHT.toFixed(2);
-                inVenteTTC.value = venteTTC.toFixed(2);
-            } else if (source === 'ht') {
-                venteHT = parseFloat(inVenteHT.value) || 0;
-                venteTTC = venteHT * (1 + tauxTVA);
-                inVenteTTC.value = venteTTC.toFixed(2);
-                margePct = achatHT > 0 ? ((venteHT - achatHT) / venteHT) * 100 : 100;
-                inMarge.value = margePct.toFixed(2);
-            } else if (source === 'ttc') {
-                venteTTC = parseFloat(inVenteTTC.value) || 0;
-                venteHT = venteTTC / (1 + tauxTVA);
-                inVenteHT.value = venteHT.toFixed(2);
-                margePct = achatHT > 0 ? ((venteHT - achatHT) / venteHT) * 100 : 100;
-                inMarge.value = margePct.toFixed(2);
+            if (confirm('Voulez-vous vraiment vider toutes les archives ?')) {
+                archives = [];
+                saveData();
+                renderArchives();
             }
-            document.getElementById('tva-montant-tva').textContent = (venteHT * tauxTVA).toFixed(2) + ' €';
-            document.getElementById('tva-benefice').textContent = (venteHT - achatHT).toFixed(2) + ' €';
         }
 
-        function generatePassword() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-            let pass = "";
-            const len = document.getElementById('pass-len').value;
-            for(let i=0; i<len; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            document.getElementById('pass-output').innerText = pass;
-        }
-        function copyPassword() {
-            const text = document.getElementById('pass-output').innerText;
-            navigator.clipboard.writeText(text).then(() => showToast('Mot de passe copié !'));
+        // ==================== TEAM & HR ====================
+        function renderEmployees() {
+            const container = document.getElementById('employees-list');
+            container.innerHTML = '';
+
+            if (employees.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-xl">
+                        <i class="fa-solid fa-users text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-sm">Aucun employé dans l'équipe.</p>
+                        <p class="text-xs text-slate-400 mt-1">Ajoutez un collaborateur via le formulaire de gauche.</p>
+                    </div>
+                `;
+                updateHeroEmployee();
+                return;
+            }
+
+            // Sort employees by score descending
+            employees.sort((a, b) => b.score - a.score);
+
+            employees.forEach(emp => {
+                const card = document.createElement('div');
+                card.className = 'p-4 rounded-xl border border-slate-200 bg-white space-y-3 shadow-sm';
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h4 class="font-bold text-slate-900 text-base">${emp.name}</h4>
+                                <span class="bg-indigo-50 text-brand-700 text-xs font-semibold px-2.5 py-0.5 rounded-full">${emp.role}</span>
+                            </div>
+                            <div class="text-xs text-slate-500 mt-1">Avertissements : <strong class="text-rose-600">${emp.warnings}</strong> | Score : <strong class="text-brand-600 text-sm">${emp.score} pts</strong></div>
+                        </div>
+                        <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+                            <button onclick="adjustScore('${emp.id}', 10)" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold px-3 py-1.5 rounded-lg text-xs transition" title="Ajouter du travail (+10 pts)">
+                                <i class="fa-solid fa-plus mr-1"></i> +10 pts
+                            </button>
+                            <button onclick="addWarning('${emp.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold px-3 py-1.5 rounded-lg text-xs transition" title="Donner un avertissement">
+                                <i class="fa-solid fa-triangle-exclamation mr-1"></i> Avertissement
+                            </button>
+                            <button onclick="deleteEmployee('${emp.id}')" class="text-slate-400 hover:text-rose-600 p-2 transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="text" value="${emp.note || ''}" onchange="updateEmpNote('${emp.id}', this.value)" placeholder="Notes / commentaires sur le dossier de l'employé..." class="w-full px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-brand-500">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            updateHeroEmployee();
         }
 
-        function cleanText(action) {
-            const el = document.getElementById('text-clean-in');
-            let val = el.value;
-            if(action === 'spaces') val = val.replace(/\s+/g, ' ').trim();
-            if(action === 'html') val = val.replace(/<[^>]*>?/gm, '');
-            if(action === 'lower') val = val.toLowerCase();
-            if(action === 'upper') val = val.toUpperCase();
-            el.value = val;
+        function addEmployee(e) {
+            e.preventDefault();
+            const name = document.getElementById('emp-name').value;
+            const role = document.getElementById('emp-role').value;
+
+            const newEmp = {
+                id: 'emp_' + Date.now(),
+                name,
+                role,
+                score: 50, // Base score
+                warnings: 0,
+                note: ''
+            };
+
+            employees.push(newEmp);
+            saveData();
+
+            document.getElementById('emp-name').value = '';
+            document.getElementById('emp-role').value = '';
+            renderEmployees();
         }
 
-        function generateWaLink() {
-            let phone = document.getElementById('wa-phone').value.replace(/[^\d+]/g, '');
-            if(phone.startsWith('0') && phone.length === 10) phone = '33' + phone.substring(1);
-            const msg = encodeURIComponent(document.getElementById('wa-msg').value);
-            document.getElementById('wa-output').value = phone ? `https://wa.me/${phone}${msg ? '?text='+msg : ''}` : '';
+        function adjustScore(id, amount) {
+            const emp = employees.find(e => e.id === id);
+            if (emp) {
+                emp.score += amount;
+                saveData();
+                renderEmployees();
+            }
         }
 
-        // Initialize things
-        generatePassword();
-        renderEmployees(); // Initial render for background state
-        renderPlanning();
+        function addWarning(id) {
+            const emp = employees.find(e => e.id === id);
+            if (emp) {
+                emp.warnings += 1;
+                emp.score = Math.max(0, emp.score - 15); // Penalize score slightly
+                saveData();
+                renderEmployees();
+            }
+        }
+
+        function updateEmpNote(id, val) {
+            const emp = employees.find(e => e.id === id);
+            if (emp) {
+                emp.note = val;
+                saveData();
+            }
+        }
+
+        function deleteEmployee(id) {
+            employees = employees.filter(e => e.id !== id);
+            saveData();
+            renderEmployees();
+        }
+
+        function updateHeroEmployee() {
+            const heroName = document.getElementById('hero-star-employee');
+            const heroScore = document.getElementById('hero-star-score');
+            const starName = document.getElementById('star-employee-name');
+            const starDesc = document.getElementById('star-employee-desc');
+            const starScore = document.getElementById('star-employee-score');
+
+            if (!employees || employees.length === 0) {
+                if (heroName) heroName.innerText = "Aucun pour l'instant";
+                if (heroScore) heroScore.innerText = "Ajoutez des points dans l'onglet Équipe & RH";
+                if (starName) starName.innerText = "Aucun employé enregistré";
+                if (starDesc) starDesc.innerText = "Le collaborateur avec le plus de points sera couronné automatiquement.";
+                if (starScore) starScore.innerText = "0 pts";
+                return;
+            }
+
+            // Find best employee
+            const best = [...employees].sort((a, b) => b.score - a.score)[0];
+            
+            if (heroName) heroName.innerText = best.name + ` (${best.role})`;
+            if (heroScore) heroScore.innerText = `Performance record : ${best.score} points`;
+            if (starName) starName.innerText = best.name;
+            if (starDesc) starDesc.innerText = `Poste : ${best.role} — Salué pour son excellent travail et son implication.`;
+            if (starScore) starScore.innerText = best.score + ' pts';
+        }
+
+        // Initial setup on load
+        window.onload = function() {
+            updateHeroEmployee();
+        };
     </script>
 </body>
 </html>
