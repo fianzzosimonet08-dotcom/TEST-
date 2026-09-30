@@ -3,28 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EntrepriseFacile - Outils de Gestion</title>
+    <title>ProFacile - Le Couteau Suisse de l'Entrepreneur</title>
     
-    <!-- Tailwind CSS pour le style -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Configuration Tailwind pour les couleurs de la marque -->
+    <!-- Configuration Tailwind -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            900: '#0c4a6e',
+                            50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9',
+                            600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e',
                         }
                     },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
                 }
             }
         }
@@ -36,63 +31,95 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         body { font-family: 'Inter', sans-serif; }
         .nav-active { background-color: #e0f2fe; color: #0284c7; border-right: 4px solid #0284c7; font-weight: 600; }
+        .nav-item { transition: all 0.2s ease; }
         
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* Animation for Toast */
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast-enter { animation: slideIn 0.3s ease-out forwards; }
+        
+        /* Outil Signature Email - Table styling for copy/paste */
+        .sig-table { font-family: Arial, sans-serif; font-size: 14px; color: #333; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex">
 
-    <!-- Sidebar -->
-    <aside id="sidebar" class="bg-white w-64 h-full border-r border-slate-200 flex flex-col transition-transform duration-300 absolute z-20 md:relative md:translate-x-0 -translate-x-full shadow-lg md:shadow-none">
-        <div class="p-6 flex items-center justify-between border-b border-slate-100">
+    <aside id="sidebar" class="bg-white w-72 h-full border-r border-slate-200 flex flex-col transition-transform duration-300 absolute z-20 md:relative md:translate-x-0 -translate-x-full shadow-lg md:shadow-none shrink-0">
+        <div class="p-5 flex items-center justify-between border-b border-slate-100 shrink-0">
             <div class="flex items-center gap-2 text-brand-600">
-                <i class="ph-fill ph-rocket-launch text-2xl"></i>
-                <span class="text-xl font-bold tracking-tight">ProFacile</span>
+                <i class="ph-fill ph-toolbox text-3xl"></i>
+                <span class="text-2xl font-bold tracking-tight">ProFacile</span>
             </div>
             <button id="close-sidebar" class="md:hidden text-slate-400 hover:text-slate-600">
                 <i class="ph ph-x text-xl"></i>
             </button>
         </div>
         
-        <nav class="flex-1 overflow-y-auto py-4 flex flex-col gap-1">
-            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-item nav-active flex items-center gap-3 px-6 py-3 text-left hover:bg-slate-50 transition-colors w-full">
-                <i class="ph ph-squares-four text-xl"></i>
-                <span>Tableau de bord</span>
+        <nav class="flex-1 overflow-y-auto py-4 flex flex-col">
+            <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-item nav-active flex items-center gap-3 px-6 py-2.5 text-left w-full mb-4">
+                <i class="ph ph-squares-four text-xl"></i> <span>Tableau de bord</span>
             </button>
-            <button onclick="navigate('invoices')" id="nav-invoices" class="nav-item flex items-center gap-3 px-6 py-3 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors w-full">
-                <i class="ph ph-receipt text-xl"></i>
-                <span>Factures Rapides</span>
+
+            <!-- Group: Finance & Gestion -->
+            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Finance & Gestion</div>
+            <button onclick="navigate('invoices')" id="nav-invoices" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-receipt text-xl"></i> <span>Factures Rapides</span>
             </button>
-            <button onclick="navigate('tasks')" id="nav-tasks" class="nav-item flex items-center gap-3 px-6 py-3 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors w-full">
-                <i class="ph ph-check-square-offset text-xl"></i>
-                <span>Tâches à faire</span>
+            <button onclick="navigate('tva')" id="nav-tva" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-calculator text-xl"></i> <span>TVA & Marge</span>
             </button>
-            <button onclick="navigate('emails')" id="nav-emails" class="nav-item flex items-center gap-3 px-6 py-3 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors w-full">
-                <i class="ph ph-envelope-simple-open text-xl"></i>
-                <span>Modèles d'Emails</span>
+            <button onclick="navigate('mileage')" id="nav-mileage" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full mb-4">
+                <i class="ph ph-car text-xl"></i> <span>Frais Kilométriques</span>
+            </button>
+
+            <!-- Group: Organisation & Prod -->
+            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Organisation & Prod</div>
+            <button onclick="navigate('tasks')" id="nav-tasks" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-check-square-offset text-xl"></i> <span>Tâches à faire</span>
+            </button>
+            <button onclick="navigate('pomodoro')" id="nav-pomodoro" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full mb-4">
+                <i class="ph ph-timer text-xl"></i> <span>Minuteur Pomodoro</span>
+            </button>
+
+            <!-- Group: Communication -->
+            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Communication</div>
+            <button onclick="navigate('emails')" id="nav-emails" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-envelope-simple-open text-xl"></i> <span>Modèles d'Emails</span>
+            </button>
+            <button onclick="navigate('signature')" id="nav-signature" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-pen-nib text-xl"></i> <span>Signature Email</span>
+            </button>
+            <button onclick="navigate('whatsapp')" id="nav-whatsapp" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full mb-4">
+                <i class="ph ph-whatsapp-logo text-xl"></i> <span>Lien WhatsApp</span>
+            </button>
+
+            <!-- Group: Outils Pratiques -->
+            <div class="px-6 mb-2 text-xs font-bold text-slate-400 uppercase tracking-wider">Outils Pratiques</div>
+            <button onclick="navigate('text-cleaner')" id="nav-text-cleaner" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-text-aa text-xl"></i> <span>Nettoyeur de Texte</span>
+            </button>
+            <button onclick="navigate('seo')" id="nav-seo" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-chart-bar text-xl"></i> <span>Compteur SEO</span>
+            </button>
+            <button onclick="navigate('password')" id="nav-password" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-key text-xl"></i> <span>Mots de Passe Sécurisés</span>
+            </button>
+            <button onclick="navigate('qrcode')" id="nav-qrcode" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full">
+                <i class="ph ph-qr-code text-xl"></i> <span>Générateur QR Code</span>
+            </button>
+            <button onclick="navigate('timezones')" id="nav-timezones" class="nav-item flex items-center gap-3 px-6 py-2.5 text-left text-slate-600 hover:bg-slate-50 hover:text-slate-900 w-full pb-8">
+                <i class="ph ph-globe text-xl"></i> <span>Fuseaux Horaires</span>
             </button>
         </nav>
-        
-        <div class="p-4 border-t border-slate-100">
-            <div class="bg-brand-50 rounded-lg p-4 text-center">
-                <i class="ph-fill ph-sparkle text-brand-500 text-2xl mb-2"></i>
-                <p class="text-xs text-brand-900 font-medium">Outil 100% gratuit, conçu pour gagner du temps.</p>
-            </div>
-        </div>
     </aside>
 
     <!-- Main Content -->
@@ -104,541 +131,830 @@
                 <button id="open-sidebar" class="md:hidden text-slate-500 hover:text-slate-800">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
-                <h1 id="page-title" class="text-lg font-semibold text-slate-800">Vue d'ensemble</h1>
+                <h1 id="page-title" class="text-xl font-bold text-slate-800">Vue d'ensemble</h1>
             </div>
-            <div class="text-sm text-slate-500 hidden sm:block">
-                Outils d'entreprise
+            <div class="text-sm text-slate-500 hidden sm:flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-full font-medium">
+                <i class="ph-fill ph-check-circle text-green-500 text-lg"></i> 100% Gratuit & Local
             </div>
         </header>
 
         <!-- Scrollable Content Area -->
-        <div class="flex-1 overflow-y-auto p-4 sm:p-8">
+        <div class="flex-1 overflow-y-auto p-4 sm:p-8 w-full bg-slate-50/50">
             
-            <!-- SECTION: Dashboard -->
-            <div id="sec-dashboard" class="section-content animate-fade-in max-w-5xl mx-auto">
-                <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 mb-8">
-                    <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-4">Bienvenue sur ProFacile 👋</h2>
-                    <p class="text-slate-600 text-lg leading-relaxed max-w-3xl">
-                        Fini la paperasse interminable et les tâches répétitives. Ce logiciel est conçu spécifiquement pour résoudre les <strong>choses les plus chiantes</strong> de la gestion d'entreprise : calculer des factures, relancer des clients ou s'organiser. <span class="text-brand-600 font-medium">Tout est gratuit, direct, et sécurisé (aucune donnée ne quitte votre ordinateur).</span>
+            <div id="sec-dashboard" class="section-content animate-fade-in max-w-6xl mx-auto">
+                <div class="bg-gradient-to-r from-brand-600 to-brand-800 rounded-2xl p-8 sm:p-10 shadow-lg mb-8 text-white">
+                    <h2 class="text-3xl sm:text-4xl font-bold mb-4">Bienvenue sur votre Couteau Suisse Pro 🛠️</h2>
+                    <p class="text-brand-100 text-lg leading-relaxed max-w-3xl">
+                        Nous avons rassemblé <strong>13 outils indispensables</strong> pour régler tous les petits problèmes chiants du quotidien d'un entrepreneur. Calculs, mise en forme, sécurité... Tout est là, gratuit, et traité directement sur votre navigateur (aucune donnée n'est envoyée sur des serveurs).
                     </p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <button onclick="navigate('invoices')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left group">
-                        <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <i class="ph-fill ph-receipt text-2xl"></i>
-                        </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2"><i class="ph-fill ph-star text-amber-400"></i> Les outils les plus populaires</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards -->
+                    <button onclick="navigate('invoices')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-receipt text-2xl"></i></div>
                         <h3 class="text-xl font-semibold mb-2">Facturation Eclair</h3>
-                        <p class="text-slate-500 text-sm">Générez une facture chiffrée en 30 secondes sans vous tromper dans les calculs de TVA.</p>
+                        <p class="text-slate-500 text-sm">Générez une facture chiffrée en 30s.</p>
                     </button>
-                    
-                    <button onclick="navigate('tasks')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left group">
-                        <div class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <i class="ph-fill ph-check-circle text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Mémoire Infaillible</h3>
-                        <p class="text-slate-500 text-sm">Un gestionnaire de tâches ultra-simple pour ne plus jamais oublier une mission urgente.</p>
+                    <button onclick="navigate('tva')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-calculator text-2xl"></i></div>
+                        <h3 class="text-xl font-semibold mb-2">Calcul TVA & Marge</h3>
+                        <p class="text-slate-500 text-sm">Finis les maux de tête pour calculer HT/TTC et marges.</p>
                     </button>
-
-                    <button onclick="navigate('emails')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow text-left group">
-                        <div class="w-12 h-12 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                            <i class="ph-fill ph-paper-plane-tilt text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Anti-Page Blanche</h3>
-                        <p class="text-slate-500 text-sm">Modèles d'emails professionnels (relances, devis) prêts à être copiés-collés.</p>
+                    <button onclick="navigate('text-cleaner')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-text-aa text-2xl"></i></div>
+                        <h3 class="text-xl font-semibold mb-2">Nettoyeur de Texte</h3>
+                        <p class="text-slate-500 text-sm">Supprimez les doubles espaces et formatez vos copiés-collés.</p>
+                    </button>
+                    <button onclick="navigate('whatsapp')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-green-50 text-green-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-whatsapp-logo text-2xl"></i></div>
+                        <h3 class="text-xl font-semibold mb-2">Lien WhatsApp Pro</h3>
+                        <p class="text-slate-500 text-sm">Créez un lien direct pour qu'on vous contacte en un clic.</p>
+                    </button>
+                    <button onclick="navigate('password')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-red-50 text-red-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-key text-2xl"></i></div>
+                        <h3 class="text-xl font-semibold mb-2">Sécurité Passwords</h3>
+                        <p class="text-slate-500 text-sm">Générez des mots de passe robustes instantanément.</p>
+                    </button>
+                    <button onclick="navigate('qrcode')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-brand-300 transition-all text-left group">
+                        <div class="w-12 h-12 rounded-lg bg-slate-100 text-slate-800 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"><i class="ph-fill ph-qr-code text-2xl"></i></div>
+                        <h3 class="text-xl font-semibold mb-2">Générateur QR Code</h3>
+                        <p class="text-slate-500 text-sm">Transformez n'importe quel lien en QR Code imprimable.</p>
                     </button>
                 </div>
             </div>
 
-            <!-- SECTION: Invoices -->
             <div id="sec-invoices" class="section-content hidden max-w-4xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 sm:p-8">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold">Calculateur de Facture Rapide</h2>
-                        <button onclick="window.print()" class="text-brand-600 hover:text-brand-800 flex items-center gap-2 font-medium">
-                            <i class="ph ph-printer"></i> Imprimer
+                        <button onclick="window.print()" class="bg-slate-100 text-slate-700 hover:bg-slate-200 px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition">
+                            <i class="ph ph-printer"></i> Imprimer / PDF
                         </button>
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Client</label>
-                            <input type="text" placeholder="Nom de l'entreprise..." class="w-full border-slate-300 rounded-lg shadow-sm border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all">
+                            <input type="text" placeholder="Nom de l'entreprise..." class="w-full border-slate-300 rounded-lg border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Date</label>
-                            <input type="date" class="w-full border-slate-300 rounded-lg shadow-sm border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all" id="invoice-date">
+                            <input type="date" class="w-full border-slate-300 rounded-lg border p-2.5 focus:ring-brand-500 focus:border-brand-500 outline-none" id="invoice-date">
                         </div>
                     </div>
 
-                    <!-- Items Table -->
                     <div class="overflow-x-auto mb-6 rounded-lg border border-slate-200">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 text-slate-600 text-sm border-b border-slate-200">
                                     <th class="p-3 font-medium w-1/2">Description</th>
                                     <th class="p-3 font-medium text-center">Qté</th>
-                                    <th class="p-3 font-medium text-right">Prix Unitaire (€)</th>
-                                    <th class="p-3 font-medium text-right">Total (€)</th>
+                                    <th class="p-3 font-medium text-right">Prix Unitaire HT</th>
+                                    <th class="p-3 font-medium text-right">Total HT</th>
                                     <th class="p-3"></th>
                                 </tr>
                             </thead>
-                            <tbody id="invoice-items-body">
-                                <!-- JS injected items go here -->
-                            </tbody>
+                            <tbody id="invoice-items-body"></tbody>
                         </table>
                     </div>
 
-                    <!-- Add Item Form -->
                     <div class="flex flex-col sm:flex-row gap-3 items-end mb-8 bg-slate-50 p-4 rounded-lg border border-slate-200 border-dashed">
-                        <div class="flex-1 w-full">
-                            <input type="text" id="new-item-desc" placeholder="Description du service / produit" class="w-full border p-2 rounded-md outline-none focus:border-brand-500">
-                        </div>
-                        <div class="w-full sm:w-24">
-                            <input type="number" id="new-item-qty" placeholder="Qté" value="1" min="1" class="w-full border p-2 rounded-md outline-none focus:border-brand-500">
-                        </div>
-                        <div class="w-full sm:w-32">
-                            <input type="number" id="new-item-price" placeholder="Prix €" step="0.01" min="0" class="w-full border p-2 rounded-md outline-none focus:border-brand-500">
-                        </div>
-                        <button onclick="addInvoiceItem()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-md transition-colors whitespace-nowrap">
-                            Ajouter
-                        </button>
+                        <div class="flex-1 w-full"><input type="text" id="new-item-desc" placeholder="Description du service / produit" class="w-full border p-2 rounded-md outline-none"></div>
+                        <div class="w-full sm:w-24"><input type="number" id="new-item-qty" placeholder="Qté" value="1" min="1" class="w-full border p-2 rounded-md outline-none"></div>
+                        <div class="w-full sm:w-32"><input type="number" id="new-item-price" placeholder="Prix €" step="0.01" min="0" class="w-full border p-2 rounded-md outline-none"></div>
+                        <button onclick="addInvoiceItem()" class="w-full sm:w-auto bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-md transition-colors whitespace-nowrap">Ajouter</button>
                     </div>
 
-                    <!-- Totals -->
-                    <div class="flex justify-end">
-                        <div class="w-full sm:w-72 space-y-3">
-                            <div class="flex justify-between text-slate-600">
-                                <span>Sous-total HT</span>
-                                <span id="invoice-subtotal">0.00 €</span>
-                            </div>
-                            <div class="flex justify-between items-center text-slate-600">
-                                <span>TVA (20%)</span>
-                                <span id="invoice-tax">0.00 €</span>
-                            </div>
-                            <div class="border-t border-slate-200 pt-3 flex justify-between font-bold text-xl text-slate-900">
-                                <span>Total TTC</span>
-                                <span id="invoice-total">0.00 €</span>
-                            </div>
+                    <div class="flex justify-between items-start">
+                        <div class="w-1/3">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Taux de TVA (%)</label>
+                            <select id="invoice-tva-rate" onchange="renderInvoiceItems()" class="border-slate-300 rounded-lg border p-2 w-32">
+                                <option value="0">0% (Auto-entrepreneur)</option>
+                                <option value="5.5">5.5%</option>
+                                <option value="10">10%</option>
+                                <option value="20" selected>20%</option>
+                            </select>
+                        </div>
+                        <div class="w-full sm:w-72 space-y-3 bg-slate-50 p-4 rounded-xl">
+                            <div class="flex justify-between text-slate-600"><span>Sous-total HT</span><span id="invoice-subtotal">0.00 €</span></div>
+                            <div class="flex justify-between items-center text-slate-600"><span id="invoice-tax-label">TVA (20%)</span><span id="invoice-tax">0.00 €</span></div>
+                            <div class="border-t border-slate-200 pt-3 flex justify-between font-bold text-xl text-slate-900"><span>Total TTC</span><span id="invoice-total">0.00 €</span></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: Tasks -->
             <div id="sec-tasks" class="section-content hidden max-w-3xl mx-auto">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-[70vh]">
-                    <div class="p-6 bg-brand-50 border-b border-brand-100 flex flex-col sm:flex-row justify-between items-center gap-4 shrink-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col h-[70vh]">
+                    <div class="p-6 bg-brand-50 flex justify-between items-center shrink-0">
                         <div>
                             <h2 class="text-2xl font-bold text-brand-900">Tâches à faire</h2>
-                            <p class="text-brand-600 text-sm">Ne perdez plus le fil de vos missions.</p>
+                            <p class="text-brand-600 text-sm">Gestionnaire ultra-simple.</p>
                         </div>
-                        <span id="task-counter" class="bg-white text-brand-700 px-3 py-1 rounded-full text-sm font-semibold shadow-sm border border-brand-100">
-                            0 restante(s)
-                        </span>
+                        <span id="task-counter" class="bg-white text-brand-700 px-3 py-1 rounded-full text-sm font-bold shadow-sm">0 restante</span>
                     </div>
-                    
-                    <div class="flex-1 overflow-y-auto p-2 sm:p-6 bg-slate-50">
-                        <ul id="task-list" class="space-y-3">
-                            <!-- Tasks injected via JS -->
-                        </ul>
-                        
+                    <div class="flex-1 overflow-y-auto p-4 bg-slate-50">
+                        <ul id="task-list" class="space-y-3"></ul>
                         <div id="empty-tasks" class="text-center py-12 text-slate-400">
-                            <i class="ph ph-coffee text-5xl mb-3"></i>
-                            <p>Aucune tâche pour le moment. Détendez-vous !</p>
+                            <i class="ph ph-coffee text-5xl mb-3"></i><p>Aucune tâche pour le moment.</p>
                         </div>
                     </div>
-                    
-                    <div class="p-4 sm:p-6 bg-white border-t border-slate-200 shrink-0">
+                    <div class="p-4 bg-white border-t border-slate-200 shrink-0">
                         <form id="task-form" class="flex gap-2">
-                            <input type="text" id="new-task-input" placeholder="Ajouter une nouvelle tâche (ex: Appeler le comptable)..." class="flex-1 border-slate-300 rounded-lg border p-3 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all shadow-sm" required autocomplete="off">
-                            <button type="submit" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-sm flex items-center gap-2">
-                                <i class="ph-bold ph-plus"></i> <span class="hidden sm:inline">Ajouter</span>
-                            </button>
+                            <input type="text" id="new-task-input" placeholder="Nouvelle tâche..." class="flex-1 border p-3 rounded-lg focus:border-brand-500 outline-none" required autocomplete="off">
+                            <button type="submit" class="bg-slate-800 text-white px-6 py-3 rounded-lg font-medium">Ajouter</button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- SECTION: Emails -->
             <div id="sec-emails" class="section-content hidden max-w-5xl mx-auto">
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Modèles d'Emails Professionnels</h2>
-                    <p class="text-slate-600 mt-1">Évitez la page blanche. Copiez, collez, personnalisez les crochets [ ], et envoyez.</p>
-                </div>
-                
+                <h2 class="text-2xl font-bold mb-6">Modèles d'Emails Prêts-à-l'emploi</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Relance -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-red-50 p-4 border-b border-red-100 flex justify-between"><h3 class="font-bold text-red-800">Relance Facture</h3><button onclick="copyEmail('email-relance')" class="text-sm bg-white px-3 py-1 rounded shadow-sm">Copier</button></div>
+                        <textarea id="email-relance" class="w-full h-40 p-4 bg-slate-50 resize-none outline-none font-mono text-sm" readonly>Bonjour [Client],&#10;Sauf erreur, la facture n°[NUM] d'un montant de [MONTANT] est échue depuis le [DATE].&#10;Merci de régulariser la situation rapidement.&#10;Cordialement.</textarea>
+                    </div>
+                    <!-- Devis -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-brand-50 p-4 border-b border-brand-100 flex justify-between"><h3 class="font-bold text-brand-800">Envoi de Devis</h3><button onclick="copyEmail('email-devis')" class="text-sm bg-white px-3 py-1 rounded shadow-sm">Copier</button></div>
+                        <textarea id="email-devis" class="w-full h-40 p-4 bg-slate-50 resize-none outline-none font-mono text-sm" readonly>Bonjour [Client],&#10;Suite à nos échanges, voici notre proposition commerciale pour [PROJET].&#10;Le budget total s'élève à [MONTANT].&#10;Je reste à disposition pour en discuter.&#10;Cordialement.</textarea>
+                    </div>
+                    <!-- Retard -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-orange-50 p-4 border-b border-orange-100 flex justify-between"><h3 class="font-bold text-orange-800">Annonce de Retard</h3><button onclick="copyEmail('email-retard')" class="text-sm bg-white px-3 py-1 rounded shadow-sm">Copier</button></div>
+                        <textarea id="email-retard" class="w-full h-40 p-4 bg-slate-50 resize-none outline-none font-mono text-sm" readonly>Bonjour [Client],&#10;Je vous contacte pour vous informer d'un léger retard sur la livraison de [PROJET/PRODUIT], indépendamment de notre volonté.&#10;La nouvelle date prévue est le [DATE].&#10;Veuillez nous excuser pour ce désagrément.&#10;Cordialement.</textarea>
+                    </div>
+                    <!-- Remerciement -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+                        <div class="bg-green-50 p-4 border-b border-green-100 flex justify-between"><h3 class="font-bold text-green-800">Remerciement / Fin de projet</h3><button onclick="copyEmail('email-merci')" class="text-sm bg-white px-3 py-1 rounded shadow-sm">Copier</button></div>
+                        <textarea id="email-merci" class="w-full h-40 p-4 bg-slate-50 resize-none outline-none font-mono text-sm" readonly>Bonjour [Client],&#10;Ce fut un plaisir de collaborer avec vous sur [PROJET].&#10;Si vous êtes satisfait, n'hésitez pas à nous laisser un avis sur : [LIEN]&#10;Au plaisir de retravailler ensemble.&#10;Bien à vous.</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-tva" class="section-content hidden max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <h2 class="text-2xl font-bold mb-2">Calculateur de TVA et Marge</h2>
+                    <p class="text-slate-500 mb-8">Saisissez 2 valeurs, le reste se calcule tout seul (Ex: Achetez à 100€, Marge souhaitée 30%).</p>
                     
-                    <!-- Template 1: Relance -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                        <div class="bg-red-50 border-b border-red-100 p-4 flex justify-between items-center">
-                            <h3 class="font-semibold text-red-800 flex items-center gap-2">
-                                <i class="ph-fill ph-warning-circle"></i> Relance de facture impayée
-                            </h3>
-                            <button onclick="copyEmail('email-relance')" class="text-red-600 hover:text-red-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-red-200 transition-colors">
-                                Copier
-                            </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-100">
+                            <h3 class="font-bold text-slate-700 border-b pb-2">Vos Données</h3>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Prix d'Achat (HT)</label>
+                                <div class="relative"><input type="number" id="tva-achat" placeholder="0.00" class="w-full border p-2 pl-3 pr-8 rounded-lg outline-none focus:border-brand-500" oninput="calcTvaMarge()"><span class="absolute right-3 top-2.5 text-slate-400">€</span></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Marge souhaitée (%)</label>
+                                <div class="relative"><input type="number" id="tva-marge-pct" placeholder="0" class="w-full border p-2 pl-3 pr-8 rounded-lg outline-none focus:border-brand-500" oninput="calcTvaMarge('marge')"><span class="absolute right-3 top-2.5 text-slate-400">%</span></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Taux de TVA</label>
+                                <select id="tva-taux" class="w-full border p-2 rounded-lg outline-none focus:border-brand-500" onchange="calcTvaMarge()">
+                                    <option value="20">20% (Standard)</option><option value="10">10% (Intermédiaire)</option><option value="5.5">5.5% (Réduit)</option><option value="0">0% (Exonéré)</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="p-4 bg-slate-50 flex-1">
-                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Relance - Facture n°[NUMÉRO]</p>
-                            <textarea id="email-relance" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Client],
 
-Sauf erreur ou omission de notre part, le paiement de la facture n°[NUMÉRO] datée du [DATE], d'un montant de [MONTANT] n'a pas encore été reçu.
-
-Le délai de paiement étant échu depuis le [DATE D'ÉCHÉANCE], nous vous prions de bien vouloir procéder au règlement dans les plus brefs délais.
-
-Si le paiement a déjà été effectué, veuillez ne pas tenir compte de cet email.
-
-Cordialement,
-[Votre Nom / Entreprise]</textarea>
-                        </div>
-                    </div>
-
-                    <!-- Template 2: Envoi Devis -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                        <div class="bg-brand-50 border-b border-brand-100 p-4 flex justify-between items-center">
-                            <h3 class="font-semibold text-brand-800 flex items-center gap-2">
-                                <i class="ph-fill ph-file-text"></i> Envoi d'une proposition commerciale
-                            </h3>
-                            <button onclick="copyEmail('email-devis')" class="text-brand-600 hover:text-brand-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-brand-200 transition-colors">
-                                Copier
-                            </button>
-                        </div>
-                        <div class="p-4 bg-slate-50 flex-1">
-                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Proposition commerciale suite à nos échanges</p>
-                            <textarea id="email-devis" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Contact],
-
-Suite à notre discussion d'hier, vous trouverez ci-joint notre devis concernant [SUJET DU PROJET].
-
-Nous avons détaillé l'ensemble des prestations que nous pourrions mettre en œuvre pour répondre à vos objectifs, pour un montant total de [MONTANT]. 
-
-Je reste à votre entière disposition pour échanger sur cette proposition et l'ajuster si nécessaire.
-
-Dans l'attente de votre retour, je vous souhaite une excellente journée.
-
-Cordialement,
-[Votre Nom / Entreprise]</textarea>
+                        <div class="space-y-4 bg-brand-50 p-6 rounded-xl border border-brand-100">
+                            <h3 class="font-bold text-brand-900 border-b border-brand-200 pb-2">Résultats</h3>
+                            <div class="flex justify-between items-center"><span class="text-sm font-medium">Prix de Vente (HT)</span><input type="number" id="tva-vente-ht" class="w-32 border p-1.5 text-right font-bold rounded" oninput="calcTvaMarge('ht')"></div>
+                            <div class="flex justify-between items-center"><span class="text-sm font-medium">Montant TVA</span><span id="tva-montant-tva" class="font-mono bg-white px-2 py-1 rounded border">0.00 €</span></div>
+                            <div class="flex justify-between items-center bg-brand-600 text-white p-3 rounded-lg"><span class="font-bold">Prix de Vente (TTC)</span><input type="number" id="tva-vente-ttc" class="w-32 bg-brand-700 border-none text-white p-1 text-right font-bold rounded" oninput="calcTvaMarge('ttc')"></div>
+                            <div class="mt-4 pt-4 border-t border-brand-200 flex justify-between items-center"><span class="text-sm font-medium text-brand-800">Bénéfice (Marge nette HT)</span><span id="tva-benefice" class="font-bold text-green-600 text-lg">0.00 €</span></div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Template 3: Réponse négative polie -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                        <div class="bg-slate-100 border-b border-slate-200 p-4 flex justify-between items-center">
-                            <h3 class="font-semibold text-slate-800 flex items-center gap-2">
-                                <i class="ph-fill ph-hand-palm"></i> Refus poli d'une demande/partenariat
-                            </h3>
-                            <button onclick="copyEmail('email-refus')" class="text-slate-600 hover:text-slate-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-slate-300 transition-colors">
-                                Copier
-                            </button>
+            <div id="sec-password" class="section-content hidden max-w-2xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <h2 class="text-2xl font-bold mb-6">Générateur de Mots de Passe</h2>
+                    <div class="bg-slate-900 rounded-xl p-4 flex items-center justify-between mb-6">
+                        <span id="pass-output" class="text-emerald-400 font-mono text-xl md:text-2xl tracking-wider break-all">Cliquer sur Générer...</span>
+                        <button onclick="copyPassword()" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg transition"><i class="ph ph-copy text-xl"></i></button>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between mb-2"><label class="font-medium">Longueur du mot de passe</label><span id="pass-len-val" class="font-bold text-brand-600">16</span></div>
+                            <input type="range" id="pass-len" min="8" max="64" value="16" class="w-full accent-brand-600" oninput="document.getElementById('pass-len-val').innerText=this.value; generatePassword()">
                         </div>
-                        <div class="p-4 bg-slate-50 flex-1">
-                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Suite à votre proposition</p>
-                            <textarea id="email-refus" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Contact],
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" id="pass-up" checked class="w-5 h-5 accent-brand-600" onchange="generatePassword()"> Majuscules (A-Z)</label>
+                            <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" id="pass-low" checked class="w-5 h-5 accent-brand-600" onchange="generatePassword()"> Minuscules (a-z)</label>
+                            <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" id="pass-num" checked class="w-5 h-5 accent-brand-600" onchange="generatePassword()"> Chiffres (0-9)</label>
+                            <label class="flex items-center gap-2 p-3 border rounded-lg cursor-pointer hover:bg-slate-50"><input type="checkbox" id="pass-sym" checked class="w-5 h-5 accent-brand-600" onchange="generatePassword()"> Symboles (!@#$)</label>
+                        </div>
+                        <button onclick="generatePassword()" class="w-full bg-brand-600 text-white py-3 rounded-lg font-bold hover:bg-brand-700 transition">Générer un nouveau mot de passe</button>
+                    </div>
+                </div>
+            </div>
 
-Je vous remercie pour votre message et l'intérêt que vous portez à [Nom de votre entreprise].
+            <div id="sec-text-cleaner" class="section-content hidden max-w-5xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Nettoyeur & Formateur de Texte</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col h-full">
+                        <label class="font-medium mb-2">Texte brut ou mal formaté :</label>
+                        <textarea id="text-clean-in" class="w-full flex-1 min-h-[300px] p-4 border border-slate-300 rounded-xl outline-none focus:border-brand-500 font-mono text-sm" placeholder="Collez votre texte ici..."></textarea>
+                    </div>
+                    <div class="flex flex-col h-full bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <label class="font-medium mb-4">Actions :</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                            <button onclick="cleanText('spaces')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">Supprimer doubles espaces</button>
+                            <button onclick="cleanText('html')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">Supprimer les balises HTML</button>
+                            <button onclick="cleanText('lower')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">TOUT EN MINUSCULES</button>
+                            <button onclick="cleanText('upper')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm">tout en majuscules</button>
+                            <button onclick="cleanText('capitalize')" class="bg-white border p-2 rounded hover:border-brand-500 text-sm col-span-1 sm:col-span-2">Première Lettre En Majuscule</button>
+                        </div>
+                        <button onclick="copyCleanText()" class="mt-auto bg-slate-800 text-white py-3 rounded-lg font-bold flex items-center justify-center gap-2"><i class="ph ph-copy"></i> Copier le résultat</button>
+                    </div>
+                </div>
+            </div>
 
-Après étude de votre proposition, nous ne pourrons malheureusement pas y donner suite. Nos priorités actuelles [ou notre budget actuel] ne nous permettent pas de nous engager dans cette voie pour le moment.
-
-Je vous souhaite néanmoins une excellente continuation dans vos projets.
-
-Bien cordialement,
-[Votre Nom / Entreprise]</textarea>
+            <div id="sec-seo" class="section-content hidden max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <h2 class="text-2xl font-bold mb-6">Compteur de Mots et SEO</h2>
+                    <textarea id="seo-input" oninput="updateSEO()" class="w-full h-48 p-4 border border-slate-300 rounded-xl outline-none focus:border-brand-500 mb-6" placeholder="Tapez ou collez votre article / post réseaux sociaux ici..."></textarea>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
+                            <div id="seo-words" class="text-3xl font-bold text-brand-600">0</div>
+                            <div class="text-sm text-slate-500 uppercase font-medium mt-1">Mots</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
+                            <div id="seo-chars" class="text-3xl font-bold text-brand-600">0</div>
+                            <div class="text-sm text-slate-500 uppercase font-medium mt-1">Caractères</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
+                            <div id="seo-chars-no-space" class="text-3xl font-bold text-brand-600">0</div>
+                            <div class="text-sm text-slate-500 uppercase font-medium mt-1">Sans Espaces</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl text-center border border-slate-100">
+                            <div id="seo-time" class="text-3xl font-bold text-brand-600">0</div>
+                            <div class="text-sm text-slate-500 uppercase font-medium mt-1">Min. de Lecture</div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Template 4: Demande de retour/Témoignage -->
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                        <div class="bg-amber-50 border-b border-amber-100 p-4 flex justify-between items-center">
-                            <h3 class="font-semibold text-amber-800 flex items-center gap-2">
-                                <i class="ph-fill ph-star"></i> Demande d'avis client
-                            </h3>
-                            <button onclick="copyEmail('email-avis')" class="text-amber-600 hover:text-amber-800 bg-white px-3 py-1 rounded shadow-sm text-sm border border-amber-200 transition-colors">
-                                Copier
-                            </button>
+            <div id="sec-whatsapp" class="section-content hidden max-w-3xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 border-t-4 border-t-[#25D366]">
+                    <h2 class="text-2xl font-bold mb-2 flex items-center gap-2"><i class="ph-fill ph-whatsapp-logo text-[#25D366]"></i> Générateur de Lien WhatsApp</h2>
+                    <p class="text-slate-500 mb-6">Créez un lien direct pour que vos clients vous envoient un message pré-rempli, sans avoir à ajouter votre numéro.</p>
+                    
+                    <div class="space-y-4 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Votre numéro (avec indicatif pays, ex: +33 pour France)</label>
+                            <input type="text" id="wa-phone" placeholder="+33 6 12 34 56 78" class="w-full border p-3 rounded-lg outline-none focus:border-[#25D366]" oninput="generateWaLink()">
                         </div>
-                        <div class="p-4 bg-slate-50 flex-1">
-                            <p class="text-sm font-medium text-slate-500 mb-2">Objet : Votre avis est précieux pour nous !</p>
-                            <textarea id="email-avis" class="w-full h-40 bg-transparent resize-none outline-none text-slate-700 font-mono text-sm leading-relaxed" readonly>Bonjour [Nom du Client],
-
-Nous espérons que vous êtes pleinement satisfait de notre récente prestation [ou produit].
-
-Afin de nous aider à toujours améliorer nos services, accepteriez-vous de prendre 2 minutes pour nous laisser un avis en ligne ? 
-
-Vous pouvez cliquer sur ce lien direct : [LIEN VERS GOOGLE/TRUSTPILOT]
-
-Votre retour d'expérience est inestimable pour notre petite entreprise. Merci beaucoup pour votre confiance.
-
-Bien à vous,
-[Votre Nom / Entreprise]</textarea>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Message pré-rempli (Optionnel)</label>
+                            <textarea id="wa-msg" class="w-full h-24 border p-3 rounded-lg outline-none focus:border-[#25D366]" placeholder="Bonjour, je vous contacte depuis votre site..." oninput="generateWaLink()"></textarea>
                         </div>
                     </div>
+                    
+                    <div class="bg-slate-50 p-4 rounded-xl flex items-center justify-between border border-slate-200">
+                        <input type="text" id="wa-output" class="bg-transparent border-none outline-none w-full text-slate-500 font-mono text-sm" readonly placeholder="https://wa.me/...">
+                        <div class="flex gap-2">
+                            <a id="wa-test" href="#" target="_blank" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-sm font-medium hover:bg-slate-300 pointer-events-none opacity-50">Tester</a>
+                            <button onclick="copyInput('wa-output')" class="px-4 py-2 bg-[#25D366] text-white rounded-lg text-sm font-medium hover:bg-[#1EBE5C]">Copier</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div id="sec-signature" class="section-content hidden max-w-6xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Générateur de Signature Pro</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Form -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium mb-1">Prénom & Nom</label><input type="text" id="sig-name" value="Jean Dupont" class="w-full border p-2 rounded outline-none" oninput="updateSignature()"></div>
+                            <div><label class="block text-sm font-medium mb-1">Poste</label><input type="text" id="sig-job" value="Directeur Commercial" class="w-full border p-2 rounded outline-none" oninput="updateSignature()"></div>
+                        </div>
+                        <div><label class="block text-sm font-medium mb-1">Entreprise</label><input type="text" id="sig-company" value="Mon Entreprise SAS" class="w-full border p-2 rounded outline-none" oninput="updateSignature()"></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><label class="block text-sm font-medium mb-1">Téléphone</label><input type="text" id="sig-phone" value="+33 6 12 34 56 78" class="w-full border p-2 rounded outline-none" oninput="updateSignature()"></div>
+                            <div><label class="block text-sm font-medium mb-1">Site Web</label><input type="text" id="sig-web" value="www.monsite.fr" class="w-full border p-2 rounded outline-none" oninput="updateSignature()"></div>
+                        </div>
+                        <div><label class="block text-sm font-medium mb-1">URL d'une photo / logo (optionnel)</label><input type="text" id="sig-pic" value="https://placehold.co/100x100/0ea5e9/ffffff?text=JD" class="w-full border p-2 rounded outline-none" oninput="updateSignature()"></div>
+                    </div>
+                    
+                    <!-- Preview -->
+                    <div class="flex flex-col">
+                        <label class="font-medium mb-2">Aperçu Visuel (Copiez ce bloc pour Gmail/Outlook) :</label>
+                        <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 flex-1 flex items-center justify-center overflow-x-auto">
+                            <!-- HTML Table for reliable email client rendering -->
+                            <div id="sig-preview" class="bg-white p-4">
+                                <table cellpadding="0" cellspacing="0" border="0" class="sig-table">
+                                    <tr>
+                                        <td width="80" style="padding-right: 15px; border-right: 2px solid #0ea5e9;">
+                                            <img id="sig-out-pic" src="https://placehold.co/100x100/0ea5e9/ffffff?text=JD" alt="Photo" width="80" style="border-radius: 50%; display: block;">
+                                        </td>
+                                        <td style="padding-left: 15px;">
+                                            <div id="sig-out-name" style="font-size: 16px; font-weight: bold; color: #111;">Jean Dupont</div>
+                                            <div id="sig-out-job" style="font-size: 13px; color: #666; margin-bottom: 5px;">Directeur Commercial <span id="sig-out-company-wrap">| <span id="sig-out-company" style="font-weight: bold; color: #0ea5e9;">Mon Entreprise SAS</span></span></div>
+                                            <div id="sig-out-phone" style="font-size: 13px; color: #444;">📞 +33 6 12 34 56 78</div>
+                                            <div id="sig-out-web" style="font-size: 13px; color: #444;">🌐 <a href="#" style="color: #0ea5e9; text-decoration: none;">www.monsite.fr</a></div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <button onclick="copySignatureVisual()" class="mt-4 bg-brand-600 text-white py-3 rounded-lg font-bold w-full hover:bg-brand-700">Copier la signature visuelle</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-mileage" class="section-content hidden max-w-3xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+                    <h2 class="text-2xl font-bold mb-2">Calculateur de Frais Kilométriques (Simplifié)</h2>
+                    <p class="text-slate-500 mb-6">Estimez rapidement vos indemnités (Barème indicatif standard). Utile pour refacturer vos déplacements.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Puissance administrative du véhicule (CV)</label>
+                            <select id="km-cv" class="w-full border p-3 rounded-lg outline-none" onchange="calcKm()">
+                                <option value="0.529">3 CV et moins</option>
+                                <option value="0.606">4 CV</option>
+                                <option value="0.636" selected>5 CV</option>
+                                <option value="0.665">6 CV</option>
+                                <option value="0.697">7 CV et plus</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1">Distance parcourue (km)</label>
+                            <input type="number" id="km-dist" placeholder="Ex: 150" class="w-full border p-3 rounded-lg outline-none" oninput="calcKm()">
+                        </div>
+                        
+                        <div class="bg-brand-50 border border-brand-100 rounded-xl p-6 mt-6 flex justify-between items-center">
+                            <div>
+                                <span class="block text-brand-900 font-medium">Montant estimé à indemniser / facturer :</span>
+                                <span class="text-xs text-brand-600">Base barème d < 5000km</span>
+                            </div>
+                            <div class="text-3xl font-bold text-brand-700" id="km-total">0.00 €</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-pomodoro" class="section-content hidden max-w-md mx-auto text-center">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-10">
+                    <h2 class="text-2xl font-bold mb-2">Minuteur Pomodoro</h2>
+                    <p class="text-slate-500 mb-8">Restez concentré sur vos tâches.</p>
+                    
+                    <div class="w-64 h-64 rounded-full border-8 border-brand-100 mx-auto flex items-center justify-center mb-8 relative">
+                        <div id="pomo-display" class="text-6xl font-bold text-slate-800 font-mono tracking-tighter">25:00</div>
+                    </div>
+                    
+                    <div class="flex justify-center gap-4 mb-6">
+                        <button onclick="startPomodoro()" id="pomo-start" class="bg-brand-600 hover:bg-brand-700 text-white px-6 py-3 rounded-full font-bold shadow w-32 transition">Démarrer</button>
+                        <button onclick="resetPomodoro()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-full font-bold shadow transition"><i class="ph-bold ph-arrow-counter-clockwise"></i></button>
+                    </div>
+                    
+                    <div class="flex justify-center gap-2">
+                        <button onclick="setPomodoroTime(25)" class="text-sm font-medium text-slate-500 hover:text-brand-600 px-3 py-1">25 min (Travail)</button>
+                        <button onclick="setPomodoroTime(5)" class="text-sm font-medium text-slate-500 hover:text-brand-600 px-3 py-1">5 min (Pause)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-timezones" class="section-content hidden max-w-5xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Fuseaux Horaires Internationaux</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6" id="tz-grid">
+                    <!-- Clocks will be JS injected here -->
+                </div>
+            </div>
+
+            <div id="sec-qrcode" class="section-content hidden max-w-3xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row gap-8 items-center">
+                    <div class="flex-1 w-full">
+                        <h2 class="text-2xl font-bold mb-2">Générateur de QR Code</h2>
+                        <p class="text-slate-500 mb-6">Tapez un lien ou un texte, votre QR code se génère instantanément.</p>
+                        
+                        <label class="block text-sm font-medium mb-1">Lien URL ou Texte</label>
+                        <input type="text" id="qr-input" placeholder="https://votresite.com" class="w-full border p-3 rounded-lg outline-none focus:border-brand-500 mb-4" oninput="generateQR()">
+                        
+                        <p class="text-xs text-slate-400 bg-slate-50 p-3 rounded border">Astuce : Vous pouvez faire un clic-droit sur l'image générée pour l'enregistrer ou la copier.</p>
+                    </div>
+                    
+                    <div class="w-64 h-64 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center p-4 shrink-0" id="qr-container">
+                        <!-- QR Code Canvas goes here -->
+                        <span class="text-slate-400 text-sm" id="qr-placeholder">Attente du lien...</span>
+                    </div>
                 </div>
             </div>
 
         </div>
     </main>
     
-    <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
-
-    <!-- Overlay for Mobile Sidebar -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-10 hidden md:hidden"></div>
 
     <script>
-        // --- INITIALIZATION ---
-        document.getElementById('invoice-date').valueAsDate = new Date();
-
-        // --- NAVIGATION LOGIC ---
-        const sections = ['dashboard', 'invoices', 'tasks', 'emails'];
+        // --- SYSTEM & NAVIGATION ---
+        const sections = ['dashboard', 'invoices', 'tasks', 'emails', 'tva', 'password', 'text-cleaner', 'seo', 'whatsapp', 'signature', 'mileage', 'pomodoro', 'timezones', 'qrcode'];
         const pageTitles = {
-            'dashboard': "Vue d'ensemble",
-            'invoices': 'Générateur de Factures',
-            'tasks': 'Gestionnaire de Tâches',
-            'emails': "Modèles d'Emails"
+            'dashboard': "Vue d'ensemble", 'invoices': 'Factures', 'tasks': 'Tâches', 'emails': "Emails Pro",
+            'tva': 'Calcul TVA & Marge', 'password': 'Mots de passe', 'text-cleaner': 'Nettoyeur Texte',
+            'seo': 'SEO & Mots', 'whatsapp': 'Lien WhatsApp', 'signature': 'Signature Email',
+            'mileage': 'Frais Kilométriques', 'pomodoro': 'Pomodoro', 'timezones': 'Horloges Monde', 'qrcode': 'QR Code'
         };
 
         function navigate(targetId) {
-            // Hide all sections
             sections.forEach(sec => {
                 document.getElementById(`sec-${sec}`).classList.add('hidden');
-                document.getElementById(`nav-${sec}`).classList.remove('nav-active', 'text-brand-600');
-                document.getElementById(`nav-${sec}`).classList.add('text-slate-600');
+                let navItem = document.getElementById(`nav-${sec}`);
+                if(navItem) {
+                    navItem.classList.remove('nav-active', 'text-brand-600');
+                    navItem.classList.add('text-slate-600');
+                }
             });
-            
-            // Show target
             document.getElementById(`sec-${targetId}`).classList.remove('hidden');
-            
-            // Style active nav
-            const activeNav = document.getElementById(`nav-${targetId}`);
-            activeNav.classList.add('nav-active');
-            activeNav.classList.remove('text-slate-600');
-            
-            // Update Title
+            let activeNav = document.getElementById(`nav-${targetId}`);
+            if(activeNav) {
+                activeNav.classList.add('nav-active');
+                activeNav.classList.remove('text-slate-600');
+            }
             document.getElementById('page-title').textContent = pageTitles[targetId];
-
-            // Close mobile sidebar if open
             closeSidebar();
         }
 
-        // --- MOBILE SIDEBAR LOGIC ---
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
-        const openBtn = document.getElementById('open-sidebar');
-        const closeBtn = document.getElementById('close-sidebar');
-
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        }
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-
-        openBtn.addEventListener('click', openSidebar);
-        closeBtn.addEventListener('click', closeSidebar);
+        document.getElementById('open-sidebar').addEventListener('click', () => { sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden'); });
+        function closeSidebar() { sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden'); }
+        document.getElementById('close-sidebar').addEventListener('click', closeSidebar);
         overlay.addEventListener('click', closeSidebar);
 
-        // --- TOAST NOTIFICATIONS ---
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast-enter flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white font-medium ${type === 'success' ? 'bg-slate-800' : 'bg-red-500'}`;
-            
-            const icon = type === 'success' ? '<i class="ph ph-check-circle text-xl"></i>' : '<i class="ph ph-warning text-xl"></i>';
-            toast.innerHTML = `${icon} <span>${message}</span>`;
-            
+            toast.innerHTML = `${type === 'success' ? '<i class="ph ph-check-circle text-xl"></i>' : '<i class="ph ph-warning text-xl"></i>'} <span>${message}</span>`;
             container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        // --- INVOICE CALCULATOR LOGIC ---
-        let invoiceItems = [
-            { id: 1, desc: 'Consultation initiale', qty: 1, price: 150.00 }
-        ];
-
-        function formatMoney(amount) {
-            return parseFloat(amount).toFixed(2) + ' €';
-        }
-
-        function renderInvoiceItems() {
-            const tbody = document.getElementById('invoice-items-body');
-            tbody.innerHTML = '';
-            
-            let subtotal = 0;
-
-            if (invoiceItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Aucune ligne facturée.</td></tr>`;
-            }
-
-            invoiceItems.forEach(item => {
-                const total = item.qty * item.price;
-                subtotal += total;
-                
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-100 last:border-0";
-                tr.innerHTML = `
-                    <td class="p-3 py-4 text-slate-800">${item.desc}</td>
-                    <td class="p-3 text-center text-slate-600">${item.qty}</td>
-                    <td class="p-3 text-right text-slate-600">${formatMoney(item.price)}</td>
-                    <td class="p-3 text-right font-medium text-slate-800">${formatMoney(total)}</td>
-                    <td class="p-3 text-right">
-                        <button onclick="removeInvoiceItem(${item.id})" class="text-red-400 hover:text-red-600 p-1 rounded transition-colors">
-                            <i class="ph-bold ph-trash"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            const tax = subtotal * 0.20; // 20% TVA
-            const grandTotal = subtotal + tax;
-
-            document.getElementById('invoice-subtotal').textContent = formatMoney(subtotal);
-            document.getElementById('invoice-tax').textContent = formatMoney(tax);
-            document.getElementById('invoice-total').textContent = formatMoney(grandTotal);
-        }
-
-        function addInvoiceItem() {
-            const descInput = document.getElementById('new-item-desc');
-            const qtyInput = document.getElementById('new-item-qty');
-            const priceInput = document.getElementById('new-item-price');
-
-            const desc = descInput.value.trim();
-            const qty = parseInt(qtyInput.value);
-            const price = parseFloat(priceInput.value);
-
-            if (!desc || isNaN(qty) || isNaN(price) || qty < 1 || price < 0) {
-                showToast('Veuillez remplir correctement les champs.', 'error');
-                return;
-            }
-
-            const newItem = {
-                id: Date.now(),
-                desc: desc,
-                qty: qty,
-                price: price
-            };
-
-            invoiceItems.push(newItem);
-            renderInvoiceItems();
-
-            // Reset inputs
-            descInput.value = '';
-            qtyInput.value = '1';
-            priceInput.value = '';
-            descInput.focus();
-        }
-
-        function removeInvoiceItem(id) {
-            invoiceItems = invoiceItems.filter(item => item.id !== id);
-            renderInvoiceItems();
-        }
-
-        // Initialize invoice display
-        renderInvoiceItems();
-
-
-        // --- TASK MANAGER LOGIC ---
-        let tasks = [
-            { id: 101, text: "Envoyer le devis à l'agence Dupont", done: false },
-            { id: 102, text: "Faire la déclaration URSSAF", done: true }
-        ];
-
-        function renderTasks() {
-            const list = document.getElementById('task-list');
-            const emptyState = document.getElementById('empty-tasks');
-            const counter = document.getElementById('task-counter');
-            
-            list.innerHTML = '';
-            
-            if (tasks.length === 0) {
-                list.classList.add('hidden');
-                emptyState.classList.remove('hidden');
+        function copyInput(id) {
+            const el = document.getElementById(id);
+            if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.select();
             } else {
-                list.classList.remove('hidden');
-                emptyState.classList.add('hidden');
-                
-                tasks.forEach(task => {
-                    const li = document.createElement('li');
-                    li.className = `flex items-center justify-between p-4 bg-white rounded-xl shadow-sm border border-slate-100 transition-all ${task.done ? 'opacity-60 bg-slate-50' : 'hover:border-brand-300'}`;
-                    
-                    li.innerHTML = `
-                        <div class="flex items-center gap-4 flex-1">
-                            <button onclick="toggleTask(${task.id})" class="text-2xl transition-colors focus:outline-none ${task.done ? 'text-green-500' : 'text-slate-300 hover:text-brand-500'}">
-                                ${task.done ? '<i class="ph-fill ph-check-circle"></i>' : '<i class="ph ph-circle"></i>'}
-                            </button>
-                            <span class="text-slate-800 text-lg ${task.done ? 'line-through text-slate-500' : ''}">${task.text}</span>
-                        </div>
-                        <button onclick="deleteTask(${task.id})" class="text-slate-300 hover:text-red-500 p-2 transition-colors ml-4 focus:outline-none">
-                            <i class="ph-bold ph-trash"></i>
-                        </button>
-                    `;
-                    list.appendChild(li);
-                });
+                window.getSelection().selectAllChildren(el);
             }
-
-            const pendingCount = tasks.filter(t => !t.done).length;
-            counter.textContent = `${pendingCount} restante${pendingCount > 1 ? 's' : ''}`;
-        }
-
-        document.getElementById('task-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const input = document.getElementById('new-task-input');
-            const text = input.value.trim();
-            
-            if(text) {
-                tasks.unshift({ id: Date.now(), text: text, done: false });
-                input.value = '';
-                renderTasks();
-            }
-        });
-
-        function toggleTask(id) {
-            const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.done = !task.done;
-                renderTasks();
-            }
-        }
-
-        function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            renderTasks();
-        }
-
-        // Initialize Tasks
-        renderTasks();
-
-
-        // --- EMAIL TEMPLATES LOGIC ---
-        function copyEmail(elementId) {
-            const textarea = document.getElementById(elementId);
-            textarea.select();
-            
-            try {
-                // Fallback document.execCommand for older browsers / iframe restrictions
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    showToast('Email copié dans le presse-papiers !');
-                } else {
-                    showToast('Erreur lors de la copie', 'error');
-                }
-            } catch (err) {
-                showToast('Erreur de copie (Navigateur non supporté)', 'error');
-            }
-            
-            // Remove selection so it doesn't look ugly after clicking
+            document.execCommand('copy');
+            showToast('Copié dans le presse-papiers !');
             window.getSelection().removeAllRanges();
         }
 
+        // --- 1. FACTURES ---
+        document.getElementById('invoice-date').valueAsDate = new Date();
+        let invoiceItems = [];
+        function formatMoney(amount) { return parseFloat(amount).toFixed(2) + ' €'; }
+        function renderInvoiceItems() {
+            const tbody = document.getElementById('invoice-items-body');
+            tbody.innerHTML = '';
+            let subtotal = 0;
+            if (invoiceItems.length === 0) tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-slate-400">Aucune ligne.</td></tr>`;
+            invoiceItems.forEach(item => {
+                const total = item.qty * item.price;
+                subtotal += total;
+                tbody.innerHTML += `
+                    <tr class="border-b border-slate-100 last:border-0">
+                        <td class="p-3 py-4 text-slate-800">${item.desc}</td>
+                        <td class="p-3 text-center text-slate-600">${item.qty}</td>
+                        <td class="p-3 text-right text-slate-600">${formatMoney(item.price)}</td>
+                        <td class="p-3 text-right font-medium text-slate-800">${formatMoney(total)}</td>
+                        <td class="p-3 text-right"><button onclick="removeInvoiceItem(${item.id})" class="text-red-400 hover:text-red-600"><i class="ph-bold ph-trash"></i></button></td>
+                    </tr>`;
+            });
+            const tvaRate = parseFloat(document.getElementById('invoice-tva-rate').value);
+            const tax = subtotal * (tvaRate / 100);
+            document.getElementById('invoice-subtotal').textContent = formatMoney(subtotal);
+            document.getElementById('invoice-tax-label').textContent = `TVA (${tvaRate}%)`;
+            document.getElementById('invoice-tax').textContent = formatMoney(tax);
+            document.getElementById('invoice-total').textContent = formatMoney(subtotal + tax);
+        }
+        function addInvoiceItem() {
+            const desc = document.getElementById('new-item-desc').value;
+            const qty = parseInt(document.getElementById('new-item-qty').value);
+            const price = parseFloat(document.getElementById('new-item-price').value);
+            if (!desc || isNaN(qty) || isNaN(price)) return showToast('Champs invalides', 'error');
+            invoiceItems.push({ id: Date.now(), desc, qty, price });
+            document.getElementById('new-item-desc').value = '';
+            renderInvoiceItems();
+        }
+        function removeInvoiceItem(id) { invoiceItems = invoiceItems.filter(i => i.id !== id); renderInvoiceItems(); }
+        renderInvoiceItems();
+
+        // --- 2. TACHES ---
+        let tasks = [{ id: 1, text: "Faire le devis Dupont", done: false }];
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            list.innerHTML = '';
+            document.getElementById('empty-tasks').classList.toggle('hidden', tasks.length > 0);
+            tasks.forEach(task => {
+                list.innerHTML += `
+                    <li class="flex items-center justify-between p-3 bg-white rounded-lg border ${task.done ? 'opacity-50' : ''}">
+                        <div class="flex items-center gap-3">
+                            <button onclick="toggleTask(${task.id})" class="${task.done ? 'text-green-500' : 'text-slate-300'} text-2xl"><i class="ph-fill ph-check-circle"></i></button>
+                            <span class="${task.done ? 'line-through text-slate-500' : ''}">${task.text}</span>
+                        </div>
+                        <button onclick="deleteTask(${task.id})" class="text-red-400"><i class="ph-bold ph-trash"></i></button>
+                    </li>`;
+            });
+            document.getElementById('task-counter').textContent = `${tasks.filter(t => !t.done).length} restante(s)`;
+        }
+        document.getElementById('task-form').onsubmit = (e) => {
+            e.preventDefault();
+            const input = document.getElementById('new-task-input');
+            if(input.value.trim()) { tasks.unshift({ id: Date.now(), text: input.value, done: false }); input.value = ''; renderTasks(); }
+        };
+        function toggleTask(id) { tasks.find(t => t.id === id).done ^= true; renderTasks(); }
+        function deleteTask(id) { tasks = tasks.filter(t => t.id !== id); renderTasks(); }
+        renderTasks();
+
+        // --- 3. EMAILS ---
+        function copyEmail(id) { copyInput(id); }
+
+        // --- 4. TVA & MARGE ---
+        function calcTvaMarge(source = 'achat') {
+            const achatHT = parseFloat(document.getElementById('tva-achat').value) || 0;
+            const tauxTVA = parseFloat(document.getElementById('tva-taux').value) / 100;
+            const inMarge = document.getElementById('tva-marge-pct');
+            const inVenteHT = document.getElementById('tva-vente-ht');
+            const inVenteTTC = document.getElementById('tva-vente-ttc');
+            
+            let venteHT = 0, venteTTC = 0, margePct = 0;
+
+            if(source === 'achat' || source === 'marge') {
+                margePct = parseFloat(inMarge.value) || 0;
+                venteHT = achatHT / (1 - (margePct/100)); // Calcul du prix de vente via Taux de Marque
+                if(margePct >= 100) venteHT = achatHT * 10; // Eviter infini
+                venteTTC = venteHT * (1 + tauxTVA);
+                inVenteHT.value = venteHT.toFixed(2);
+                inVenteTTC.value = venteTTC.toFixed(2);
+            } else if (source === 'ht') {
+                venteHT = parseFloat(inVenteHT.value) || 0;
+                venteTTC = venteHT * (1 + tauxTVA);
+                inVenteTTC.value = venteTTC.toFixed(2);
+                margePct = achatHT > 0 ? ((venteHT - achatHT) / venteHT) * 100 : 100;
+                inMarge.value = margePct.toFixed(2);
+            } else if (source === 'ttc') {
+                venteTTC = parseFloat(inVenteTTC.value) || 0;
+                venteHT = venteTTC / (1 + tauxTVA);
+                inVenteHT.value = venteHT.toFixed(2);
+                margePct = achatHT > 0 ? ((venteHT - achatHT) / venteHT) * 100 : 100;
+                inMarge.value = margePct.toFixed(2);
+            }
+
+            const montantTVA = venteHT * tauxTVA;
+            const benefice = venteHT - achatHT;
+            
+            document.getElementById('tva-montant-tva').textContent = formatMoney(montantTVA);
+            document.getElementById('tva-benefice').textContent = formatMoney(benefice);
+        }
+
+        // --- 5. MOTS DE PASSE ---
+        function generatePassword() {
+            const length = document.getElementById('pass-len').value;
+            const up = document.getElementById('pass-up').checked;
+            const low = document.getElementById('pass-low').checked;
+            const num = document.getElementById('pass-num').checked;
+            const sym = document.getElementById('pass-sym').checked;
+            
+            let chars = "";
+            if(up) chars += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            if(low) chars += "abcdefghijklmnopqrstuvwxyz";
+            if(num) chars += "0123456789";
+            if(sym) chars += "!@#$%^&*()_+~`|}{[]:;?><,./-=";
+            
+            if(chars === "") return document.getElementById('pass-output').innerText = "Cochez au moins une case!";
+            
+            let pass = "";
+            for (let i = 0; i < length; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('pass-output').innerText = pass;
+        }
+        function copyPassword() {
+            const text = document.getElementById('pass-output').innerText;
+            if(text.includes('Coch') || text.includes('Cliqu')) return;
+            navigator.clipboard.writeText(text).then(() => showToast('Mot de passe copié !')).catch(()=> {
+                // Fallback
+                let temp = document.createElement("textarea");
+                temp.value = text;
+                document.body.appendChild(temp);
+                temp.select();
+                document.execCommand("copy");
+                document.body.removeChild(temp);
+                showToast('Mot de passe copié !');
+            });
+        }
+        // Auto-gen on load
+        generatePassword();
+
+        // --- 6. NETTOYEUR TEXTE ---
+        function cleanText(action) {
+            const el = document.getElementById('text-clean-in');
+            let val = el.value;
+            if(action === 'spaces') val = val.replace(/\s+/g, ' ').trim();
+            if(action === 'html') val = val.replace(/<[^>]*>?/gm, '');
+            if(action === 'lower') val = val.toLowerCase();
+            if(action === 'upper') val = val.toUpperCase();
+            if(action === 'capitalize') val = val.toLowerCase().replace(/(^\s*\w|[\.\!\?]\s*\w)/g, c => c.toUpperCase());
+            el.value = val;
+            updateSEO(); // Also update SEO if it's the same content concept
+        }
+        function copyCleanText() { copyInput('text-clean-in'); }
+
+        // --- 7. SEO ---
+        function updateSEO() {
+            const text = document.getElementById('seo-input').value;
+            const chars = text.length;
+            const charsNoSpace = text.replace(/\s/g, "").length;
+            const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+            const time = Math.ceil(words / 200); // Avg 200 words per min
+            
+            document.getElementById('seo-chars').textContent = chars;
+            document.getElementById('seo-chars-no-space').textContent = charsNoSpace;
+            document.getElementById('seo-words').textContent = words;
+            document.getElementById('seo-time').textContent = time;
+        }
+
+        // --- 8. WHATSAPP ---
+        function generateWaLink() {
+            let phone = document.getElementById('wa-phone').value.replace(/[^\d+]/g, '');
+            if(phone.startsWith('+')) phone = phone.substring(1);
+            if(phone.startsWith('00')) phone = phone.substring(2);
+            // Replace leading 0 by 33 if 10 digits (French assumption if no indicatif)
+            if(phone.startsWith('0') && phone.length === 10) phone = '33' + phone.substring(1);
+            
+            const msg = encodeURIComponent(document.getElementById('wa-msg').value);
+            const link = phone ? `https://wa.me/${phone}${msg ? '?text='+msg : ''}` : '';
+            
+            const out = document.getElementById('wa-output');
+            const testBtn = document.getElementById('wa-test');
+            
+            out.value = link;
+            if(link) {
+                testBtn.href = link;
+                testBtn.classList.remove('pointer-events-none', 'opacity-50');
+                testBtn.classList.add('bg-slate-800', 'text-white');
+            } else {
+                testBtn.href = "#";
+                testBtn.classList.add('pointer-events-none', 'opacity-50');
+                testBtn.classList.remove('bg-slate-800', 'text-white');
+            }
+        }
+
+        // --- 9. SIGNATURE ---
+        function updateSignature() {
+            document.getElementById('sig-out-name').textContent = document.getElementById('sig-name').value;
+            document.getElementById('sig-out-job').childNodes[0].nodeValue = document.getElementById('sig-job').value + " ";
+            const comp = document.getElementById('sig-company').value;
+            if(comp) {
+                document.getElementById('sig-out-company-wrap').style.display = 'inline';
+                document.getElementById('sig-out-company').textContent = comp;
+            } else {
+                document.getElementById('sig-out-company-wrap').style.display = 'none';
+            }
+            document.getElementById('sig-out-phone').textContent = "📞 " + document.getElementById('sig-phone').value;
+            
+            const web = document.getElementById('sig-web').value;
+            const a = document.getElementById('sig-out-web').querySelector('a');
+            a.textContent = web;
+            a.href = web.startsWith('http') ? web : 'https://' + web;
+            
+            const pic = document.getElementById('sig-pic').value;
+            const img = document.getElementById('sig-out-pic');
+            img.src = pic || 'https://placehold.co/100x100/eeeeee/cccccc?text=X';
+        }
+        function copySignatureVisual() {
+            const el = document.getElementById('sig-preview');
+            const selection = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            document.execCommand('copy');
+            selection.removeAllRanges();
+            showToast('Signature visuelle copiée !');
+        }
+        updateSignature();
+
+        // --- 10. FRAIS KMS ---
+        function calcKm() {
+            const dist = parseFloat(document.getElementById('km-dist').value) || 0;
+            const rate = parseFloat(document.getElementById('km-cv').value);
+            document.getElementById('km-total').textContent = formatMoney(dist * rate);
+        }
+
+        // --- 11. POMODORO ---
+        let pomoTime = 25 * 60;
+        let pomoInterval = null;
+        let pomoRunning = false;
+        
+        function updatePomoDisplay() {
+            const m = Math.floor(pomoTime / 60).toString().padStart(2, '0');
+            const s = (pomoTime % 60).toString().padStart(2, '0');
+            document.getElementById('pomo-display').textContent = `${m}:${s}`;
+        }
+        function setPomodoroTime(min) {
+            clearInterval(pomoInterval);
+            pomoRunning = false;
+            pomoTime = min * 60;
+            document.getElementById('pomo-start').textContent = "Démarrer";
+            updatePomoDisplay();
+        }
+        function startPomodoro() {
+            const btn = document.getElementById('pomo-start');
+            if (pomoRunning) {
+                clearInterval(pomoInterval);
+                btn.textContent = "Reprendre";
+            } else {
+                if(pomoTime === 0) setPomodoroTime(25);
+                pomoInterval = setInterval(() => {
+                    pomoTime--;
+                    updatePomoDisplay();
+                    if(pomoTime <= 0) {
+                        clearInterval(pomoInterval);
+                        pomoRunning = false;
+                        btn.textContent = "Terminé !";
+                        showToast("Temps écoulé !");
+                        // Play small beep if needed (optional)
+                    }
+                }, 1000);
+                btn.textContent = "Pause";
+            }
+            pomoRunning = !pomoRunning;
+        }
+        function resetPomodoro() { setPomodoroTime(25); }
+
+        // --- 12. FUSEAUX HORAIRES ---
+        const zones = [
+            { name: 'Paris', tz: 'Europe/Paris', flag: '🇫🇷' },
+            { name: 'New York', tz: 'America/New_York', flag: '🇺🇸' },
+            { name: 'Londres', tz: 'Europe/London', flag: '🇬🇧' },
+            { name: 'Tokyo', tz: 'Asia/Tokyo', flag: '🇯🇵' },
+            { name: 'Dubaï', tz: 'Asia/Dubai', flag: '🇦🇪' },
+            { name: 'Sydney', tz: 'Australia/Sydney', flag: '🇦🇺' }
+        ];
+        function updateClocks() {
+            const grid = document.getElementById('tz-grid');
+            if(!grid.innerHTML.trim()) {
+                // Initialize HTML
+                zones.forEach((z, i) => {
+                    grid.innerHTML += `
+                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center">
+                            <div class="text-2xl mb-2">${z.flag}</div>
+                            <h3 class="font-bold text-slate-700 mb-1">${z.name}</h3>
+                            <div id="tz-clock-${i}" class="text-2xl font-mono text-brand-600 font-bold">--:--:--</div>
+                        </div>`;
+                });
+            }
+            // Update time
+            const now = new Date();
+            zones.forEach((z, i) => {
+                const el = document.getElementById(`tz-clock-${i}`);
+                if(el) el.textContent = now.toLocaleTimeString("fr-FR", { timeZone: z.tz });
+            });
+        }
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        // --- 13. QR CODE ---
+        let qrCode = null;
+        function generateQR() {
+            const val = document.getElementById('qr-input').value;
+            const container = document.getElementById('qr-container');
+            const placeholder = document.getElementById('qr-placeholder');
+            
+            if(!val) {
+                if(qrCode) { qrCode.clear(); container.innerHTML = ''; }
+                container.appendChild(placeholder);
+                placeholder.style.display = 'block';
+                return;
+            }
+            
+            placeholder.style.display = 'none';
+            if(!qrCode) {
+                qrCode = new QRCode(container, {
+                    text: val,
+                    width: 200,
+                    height: 200,
+                    colorDark : "#0c4a6e",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            } else {
+                qrCode.clear();
+                qrCode.makeCode(val);
+            }
+        }
     </script>
 </body>
 </html>
